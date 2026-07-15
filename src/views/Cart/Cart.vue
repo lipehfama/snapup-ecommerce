@@ -83,28 +83,26 @@
             </aside>
           </article>
           <article
-            className="cart-cfoot d-flex align-items-start justify-content-between py-3 bg-white"
+            class="cart-cfoot d-flex align-items-start justify-content-between py-3 bg-white"
           >
-            <div className="cart-cfoot-l">
+            <div class="cart-cfoot-l">
               <button
                 type="button"
-                className="clear-cart-btn text-danger fs-5 text-uppercase fw-bold"
+                class="clear-cart-btn text-danger fs-5 text-uppercase fw-bold"
                 @click="cartStore.clearCart"
               >
                 <i class="bi bi-trash-fill"></i>
-                <span className="mx-1">Clear Cart</span>
+                <span class="mx-1">Clear Cart</span>
               </button>
             </div>
 
-            <div className="cart-cfoot-r flex flex-column justify-end">
-              <div className="total-txt flex align-center justify-end">
-                <div className="font-manrope fw-semibold">Total ({{ itemsCount }}) items:</div>
-                <span className="text-orange fs-5 mx-2 fw-bold">{{
-                  formatPrice(totalAmount)
-                }}</span>
+            <div class="cart-cfoot-r flex flex-column justify-end">
+              <div class="total-txt flex align-center justify-end">
+                <div class="font-manrope fw-semibold">Total ({{ itemsCount }}) items:</div>
+                <span class="text-orange fs-5 mx-2 fw-bold">{{ formatPrice(totalAmount) }}</span>
               </div>
 
-              <button type="button" className="checkout-btn text-white bg-orange fs-6">
+              <button type="button" class="checkout-btn text-white bg-orange fs-6">
                 Check Out
               </button>
             </div>

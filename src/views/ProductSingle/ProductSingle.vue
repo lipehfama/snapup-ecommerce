@@ -74,7 +74,7 @@
                   >
                     <i class="bi bi-dash"></i>
                   </button>
-                  <div className="qty-value d-flex align-items-center justify-content-center">
+                  <div class="qty-value d-flex align-items-center justify-content-center">
                     {{ quantity }}
                   </div>
                   <button
@@ -100,8 +100,8 @@
                   <i class="bi bi-cart-fill"></i>
                   <span class="btn-text mx-2">add to cart</span>
                 </button>
-                <button type="button" className="buy-now btn mx-3">
-                  <span className="btn-text">buy now</span>
+                <button type="button" class="buy-now btn mx-3">
+                  <span class="btn-text">buy now</span>
                 </button>
               </aside>
             </article>

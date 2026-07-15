@@ -9,7 +9,7 @@
           <span class="navbar-brand-ico">
             <i class="bi bi-bag-dash-fill"></i>
           </span>
-          <span class="navbar-brand-txt mx-2"> <span className="fw-bold">Snap</span>Up. </span>
+          <span class="navbar-brand-txt mx-2"> <span class="fw-bold">Snap</span>Up. </span>
         </router-link>
       </aside>
 
@@ -33,7 +33,11 @@
           </div>
         </article>
         <ul class="navbar-nav d-none d-lg-flex align-items-center fs-5 fw-normal font-manrope">
-          <li v-for="(category, idx) in categories.slice(0, 8)" :key="idx" class="navbar-item no-wrap">
+          <li
+            v-for="(category, idx) in categories.slice(0, 8)"
+            :key="idx"
+            class="navbar-item no-wrap"
+          >
             <router-link :to="`/category/${category.slug}`" class="navbar-link text-capitalize">
               {{ category.name.replace("-", "") }}
             </router-link>
@@ -42,8 +46,8 @@
       </aside>
       <aside class="navbar-cart d-flex align-items-center">
         <router-link to="/cart" class="cart-btn">
-          <i className="bi bi-cart"></i>
-          <div className="cart-items-value">{{ itemsCount }}</div>
+          <i class="bi bi-cart"></i>
+          <div class="cart-items-value">{{ itemsCount }}</div>
           <CartModal :carts="carts" />
         </router-link>
       </aside>
