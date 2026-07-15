@@ -69,16 +69,17 @@ export default defineConfig({
       }
     })
   ],
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url))
-    }
-  },
   css: {
     preprocessorOptions: {
       scss: {
+        // @ts-expect-error - `api` isn't in the installed Vite version's types yet, but is a valid runtime option
         api: "modern-compiler"
       }
+    }
+  },
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./src", import.meta.url))
     }
   }
 });
