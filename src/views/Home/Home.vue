@@ -80,5 +80,5 @@ const categoryProducts = computed<IProducts[][]>(() => {
 </script>
 
 <style lang="scss" scoped>
-@import "./Home.module.scss";
+@use "./Home.scss";
 </style>

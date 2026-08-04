@@ -20,5 +20,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "./CartMessage.module.scss";
+@use "./CartMessage.scss";
 </style>

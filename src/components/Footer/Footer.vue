@@ -18,5 +18,5 @@
 <script setup lang="ts"></script>
 
 <style lang="scss" scoped>
-@import "./Footer.module.scss";
+@use "./Footer.scss";
 </style>

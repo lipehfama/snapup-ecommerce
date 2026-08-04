@@ -132,5 +132,5 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@import "./Cart.module.scss";
+@use "./Cart.scss";
 </style>

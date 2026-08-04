@@ -69,5 +69,5 @@ import Navbar from "../Navbar/Navbar.vue";
 </script>
 
 <style lang="scss" scoped>
-@import "./Header.module.scss";
+@use "./Header.scss";
 </style>

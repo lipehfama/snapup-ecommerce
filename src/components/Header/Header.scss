@@ -1,0 +1,24 @@
+@use "sass:color";
+@use "../../assets/styles/variables" as *;
+
+.header {
+  background: $clr-orange;
+  background: linear-gradient(
+    180deg,
+    $clr-orange 0%,
+    color.adjust($clr-orange, $lightness: -7%) 100%
+  );
+
+  .header-cnt-top {
+    border-bottom: 1px solid color.adjust($clr-orange, $lightness: 10%);
+  }
+
+  @media screen and (max-width: 992px) {
+    .header-cnt-top {
+      flex-direction: column;
+      .header-cnt-top-l {
+        margin-bottom: 4px;
+      }
+    }
+  }
+}

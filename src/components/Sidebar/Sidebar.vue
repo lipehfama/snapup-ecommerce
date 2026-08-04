@@ -35,5 +35,5 @@ const categories = computed(() => categoryStore.categories);
 </script>
 
 <style lang="scss" scoped>
-@import "./Sidebar.module.scss";
+@use "./Sidebar.scss";
 </style>

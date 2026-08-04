@@ -109,5 +109,5 @@ const handleSearchTerm = (e: Event) => {
 </script>
 
 <style lang="scss" scoped>
-@import "./Navbar.module.scss";
+@use "./Navbar.scss";
 </style>

@@ -36,5 +36,5 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "./ProductList.modules.scss";
+@use "./ProductList.scss";
 </style>

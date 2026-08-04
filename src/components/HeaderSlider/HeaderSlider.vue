@@ -31,5 +31,5 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "./HeaderSlider.module.scss";
+@use "./HeaderSlider.scss";
 </style>

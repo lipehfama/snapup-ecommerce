@@ -44,5 +44,5 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-@import "./CategoryProduct.module.scss";
+@use "./CategoryProduct.scss";
 </style>

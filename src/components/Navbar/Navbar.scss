@@ -1,4 +1,4 @@
-@import "../../assets/styles/main.scss";
+@use "../../assets/styles/variables" as *;
 
 .navbar {
   padding-top: 12px;
@@ -28,8 +28,16 @@
       .form-control {
         width: 100%;
         padding: 0 16px;
+        border: 0;
+        background-color: $clr-white;
         color: rgba(0, 0, 0, 0.8);
         caret-color: $clr-orange;
+
+        &:focus {
+          border-color: transparent;
+          box-shadow: none;
+        }
+
         &::placeholder {
           font-size: 13.5px;
           font-family: $font-family-manrope;

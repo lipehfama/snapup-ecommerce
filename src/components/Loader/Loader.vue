@@ -19,5 +19,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "./Loader.module.scss";
+@use "./Loader.scss";
 </style>

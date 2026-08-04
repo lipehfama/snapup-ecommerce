@@ -21,7 +21,7 @@
 </template>
 
 <style lang="scss" scoped>
-@import "./Search.module.scss";
+@use "./Search.scss";
 </style>
 
 <script setup lang="ts">

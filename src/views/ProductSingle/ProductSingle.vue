@@ -181,5 +181,5 @@ const addToCartHandler = (product: IProducts) => {
 </script>
 
 <style lang="scss" scoped>
-@import "./ProductSingle.module.scss";
+@use "./ProductSingle.scss";
 </style>
