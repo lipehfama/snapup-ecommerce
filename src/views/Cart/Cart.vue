@@ -1,3 +1,21 @@
+<script setup lang="ts">
+import { useCartStore } from "@/stores/cartStore";
+import { formatPrice } from "@/utils/helpers";
+import { shopping_cart } from "@/utils/images";
+import { storeToRefs } from "pinia";
+import { computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+const cartStore = useCartStore();
+//const cartStore = computed(() => useCartStore());
+const { carts, itemsCount, totalAmount } = storeToRefs(cartStore);
+//console.log(itemsCount.value, totalAmount.value);
+onMounted(() => {
+  cartStore.getCartTotal(carts.value);
+});
+</script>
+
 <template>
   <main v-if="carts.length === 0" class="container mt-5">
     <article
@@ -113,24 +131,6 @@
   </main>
 </template>
 
-<script setup lang="ts">
-import { useCartStore } from "@/stores/cartStore";
-import { formatPrice } from "@/utils/helpers";
-import { shopping_cart } from "@/utils/images";
-import { storeToRefs } from "pinia";
-import { computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-const cartStore = useCartStore();
-//const cartStore = computed(() => useCartStore());
-const { carts, itemsCount, totalAmount } = storeToRefs(cartStore);
-//console.log(itemsCount.value, totalAmount.value);
-onMounted(() => {
-  cartStore.getCartTotal(carts.value);
-});
-</script>
-
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @use "./Cart.scss";
 </style>

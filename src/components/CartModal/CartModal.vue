@@ -1,3 +1,31 @@
+<script lang="ts">
+import { shopping_cart } from "@/utils/images";
+import { formatPrice } from "@/utils/helpers";
+//import type { IProducts } from "@/types/IProducts";
+import { defineComponent } from "vue";
+import type { ICartItems } from "@/types/ICarts";
+/*
+defineProps({
+  carts: {
+    type: Array as PropType<IProducts[]>,
+    required: true
+  }
+});
+*/
+
+export default defineComponent({
+  props: {
+    carts: {
+      type: Array as () => ICartItems[],
+      required: true
+    }
+  },
+  setup() {
+    return { formatPrice, shopping_cart };
+  }
+});
+</script>
+
 <template>
   <section class="cart-modal">
     <h5 class="cart-modal-title fw-medium fs-5 font-manrope text-center">Recently Added Products</h5>
@@ -31,34 +59,6 @@
   </section>
 </template>
 
-<script lang="ts">
-import { shopping_cart } from "@/utils/images";
-import { formatPrice } from "@/utils/helpers";
-//import type { IProducts } from "@/types/IProducts";
-import { defineComponent } from "vue";
-import type { ICartItems } from "@/types/ICarts";
-/*
-defineProps({
-  carts: {
-    type: Array as PropType<IProducts[]>,
-    required: true
-  }
-});
-*/
-
-export default defineComponent({
-  props: {
-    carts: {
-      type: Array as () => ICartItems[],
-      required: true
-    }
-  },
-  setup() {
-    return { formatPrice, shopping_cart };
-  }
-});
-</script>
-
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @use "./CartModal.scss";
 </style>

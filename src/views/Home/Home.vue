@@ -1,37 +1,3 @@
-<template>
-  <main>
-    <section class="slider-wrapper">
-      <HeaderSlider />
-    </section>
-    <section class="main-content bg-whitesmoke">
-      <div class="container">
-        <article class="categories py-5">
-          <section class="categories-item">
-            <aside class="title-md">
-              <h3>See our products</h3>
-            </aside>
-            <!-- Conditionally render Loader or ProductList based on productStatus -->
-            <Loader v-if="productStatus === STATUS.LOADING" />
-            <ProductList v-else :products="tempProducts" />
-          </section>
-
-          <section
-            class="categories-item"
-            v-for="(products, index) in categoryProducts"
-            :key="categories[index]?.slug"
-          >
-            <aside class="title-md">
-              <h3>{{ categories[index]?.name }}</h3>
-            </aside>
-            <Loader v-if="productStatus === STATUS.LOADING" />
-            <ProductList v-else :products="products" />
-          </section>
-        </article>
-      </div>
-    </section>
-  </main>
-</template>
-
 <script setup lang="ts">
 import HeaderSlider from "@/components/HeaderSlider/HeaderSlider.vue";
 import Loader from "@/components/Loader/Loader.vue";
@@ -79,6 +45,40 @@ const categoryProducts = computed<IProducts[][]>(() => {
 });
 </script>
 
-<style lang="scss" scoped>
+<template>
+  <main>
+    <section class="slider-wrapper">
+      <HeaderSlider />
+    </section>
+    <section class="main-content bg-whitesmoke">
+      <div class="container">
+        <article class="categories py-5">
+          <section class="categories-item">
+            <aside class="title-md">
+              <h3>See our products</h3>
+            </aside>
+            <!-- Conditionally render Loader or ProductList based on productStatus -->
+            <Loader v-if="productStatus === STATUS.LOADING" />
+            <ProductList v-else :products="tempProducts" />
+          </section>
+
+          <section
+            class="categories-item"
+            v-for="(products, index) in categoryProducts"
+            :key="categories[index]?.slug"
+          >
+            <aside class="title-md">
+              <h3>{{ categories[index]?.name }}</h3>
+            </aside>
+            <Loader v-if="productStatus === STATUS.LOADING" />
+            <ProductList v-else :products="products" />
+          </section>
+        </article>
+      </div>
+    </section>
+  </main>
+</template>
+
+<style scoped lang="scss">
 @use "./Home.scss";
 </style>

@@ -1,3 +1,15 @@
+<script lang="ts">
+import { defineComponent } from "vue";
+import { sliderImgs } from "@/utils/images";
+
+export default defineComponent({
+  name: "BootstrapCarousel",
+  setup() {
+    return { sliderImgs };
+  }
+});
+</script>
+
 <template>
   <article
     id="carouselExampleInterval"
@@ -18,18 +30,6 @@
   </article>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import { sliderImgs } from "@/utils/images";
-
-export default defineComponent({
-  name: "BootstrapCarousel",
-  setup() {
-    return { sliderImgs };
-  }
-});
-</script>
-
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @use "./HeaderSlider.scss";
 </style>

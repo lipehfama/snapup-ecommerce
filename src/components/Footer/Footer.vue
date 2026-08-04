@@ -1,3 +1,5 @@
+<script setup lang="ts"></script>
+
 <template>
   <footer class="footer bg-orange">
     <div class="container py-4 text-center">
@@ -15,8 +17,6 @@
   </footer>
 </template>
 
-<script setup lang="ts"></script>
-
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @use "./Footer.scss";
 </style>

@@ -1,3 +1,70 @@
+<script setup lang="ts">
+import { useProductStore } from "@/stores/productStore";
+import { STATUS } from "@/utils/status";
+import { formatPrice } from "@/utils/helpers";
+import Loader from "@/components/Loader/Loader.vue";
+import { useRoute } from "vue-router";
+import { computed, onMounted, ref } from "vue";
+import { useCartStore } from "@/stores/cartStore";
+import CartMessage from "@/components/CartMessage/CartMessage.vue";
+import type { IProducts } from "@/types/IProducts";
+
+const route = useRoute();
+
+const id = route.params.id as string;
+const productStore = useProductStore();
+const cartStore = useCartStore();
+const product = computed(() => productStore.productSingle);
+const productStatus = computed(() => productStore.productSingleStatus);
+const quantity = ref(1);
+const cartMessageStatus = computed(() => cartStore.getCartMessageStatus);
+//console.log(cartMessageStatus.value);
+onMounted(async () => {
+  productStore.fetchProductSingle(id);
+});
+
+const thumbItems = computed(() => {
+  return product.value?.images?.slice(1, 4) || [];
+});
+
+let discountedPrice = computed(() => {
+  return product.value.price - product.value.price * (product.value.discountPercentage / 100);
+});
+
+let outOfStock = computed(() => {
+  return product.value.stock === 0 || "";
+});
+
+// Increase quantity
+const increaseQty = () => {
+  const maxStock = product.value?.stock ?? Infinity;
+  return (quantity.value = Math.min(quantity.value + 1, maxStock));
+};
+
+// Decrease quantity
+const decreaseQty = () => {
+  return (quantity.value = Math.max(quantity.value - 1, 1));
+};
+
+// Add to Cart Handler
+const addToCartHandler = (product: IProducts) => {
+  // Calculate discounted price
+  const discountedPrice = product.price - product.price * (product.discountPercentage / 100);
+  // Calculate total price based on quantity
+  const totalPrice = quantity.value * discountedPrice;
+
+  // Add to cart using Pinia store
+  cartStore.addToCart({
+    ...product,
+    quantity: quantity.value,
+    discountedPrice,
+    totalPrice
+  });
+
+  cartStore.setCartMessageOn();
+};
+</script>
+
 <template>
   <main class="py-5 bg-whitesmoke">
     <Loader v-if="productStatus === STATUS.LOADING" />
@@ -113,73 +180,6 @@
   <CartMessage v-if="cartMessageStatus" />
 </template>
 
-<script setup lang="ts">
-import { useProductStore } from "@/stores/productStore";
-import { STATUS } from "@/utils/status";
-import { formatPrice } from "@/utils/helpers";
-import Loader from "@/components/Loader/Loader.vue";
-import { useRoute } from "vue-router";
-import { computed, onMounted, ref } from "vue";
-import { useCartStore } from "@/stores/cartStore";
-import CartMessage from "@/components/CartMessage/CartMessage.vue";
-import type { IProducts } from "@/types/IProducts";
-
-const route = useRoute();
-
-const id = route.params.id as string;
-const productStore = useProductStore();
-const cartStore = useCartStore();
-const product = computed(() => productStore.productSingle);
-const productStatus = computed(() => productStore.productSingleStatus);
-const quantity = ref(1);
-const cartMessageStatus = computed(() => cartStore.getCartMessageStatus);
-//console.log(cartMessageStatus.value);
-onMounted(async () => {
-  productStore.fetchProductSingle(id);
-});
-
-const thumbItems = computed(() => {
-  return product.value?.images?.slice(1, 4) || [];
-});
-
-let discountedPrice = computed(() => {
-  return product.value.price - product.value.price * (product.value.discountPercentage / 100);
-});
-
-let outOfStock = computed(() => {
-  return product.value.stock === 0 || "";
-});
-
-// Increase quantity
-const increaseQty = () => {
-  const maxStock = product.value?.stock ?? Infinity;
-  return (quantity.value = Math.min(quantity.value + 1, maxStock));
-};
-
-// Decrease quantity
-const decreaseQty = () => {
-  return (quantity.value = Math.max(quantity.value - 1, 1));
-};
-
-// Add to Cart Handler
-const addToCartHandler = (product: IProducts) => {
-  // Calculate discounted price
-  const discountedPrice = product.price - product.price * (product.discountPercentage / 100);
-  // Calculate total price based on quantity
-  const totalPrice = quantity.value * discountedPrice;
-
-  // Add to cart using Pinia store
-  cartStore.addToCart({
-    ...product,
-    quantity: quantity.value,
-    discountedPrice,
-    totalPrice
-  });
-
-  cartStore.setCartMessageOn();
-};
-</script>
-
-<style lang="scss" scoped>
+<style scoped lang="scss">
 @use "./ProductSingle.scss";
 </style>
