@@ -1,6 +1,11 @@
 
 # Snapup Ecommerce
 
+## Project documentation
+
+The project architecture, folder structure, data flow, development workflow, deployment setup,
+known issues, and official technical references are documented in the [project wiki](wiki/README.md).
+
 ### Screenshots
 
 ![snapup](https://github.com/user-attachments/assets/e1bb3c59-01b8-447f-bd73-b67a4763fa1d)
@@ -35,6 +40,5 @@ bun run dev
 - Media queries and responsivity
 - Sass Mixins
 - Use ref
-
 
 
