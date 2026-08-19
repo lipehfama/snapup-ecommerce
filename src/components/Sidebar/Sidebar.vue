@@ -17,11 +17,11 @@ const categories = computed(() => categoryStore.categories);
 </script>
 
 <template>
-  <aside :class="['sidebar', isSidebarOn ? 'hide-sidebar' : '']">
+  <menu :class="['sidebar', isSidebarOn ? 'hide-sidebar' : '']">
     <button aria-label="sidebar" type="button" class="sidebar-hide-btn" @click="setSidebarOff">
       <i class="bi bi-x bold-icon"></i>
     </button>
-    <div class="sidebar-cnt">
+    <section class="sidebar-cnt">
       <div class="cat-title fs-4 text-uppercase fw-bold ls-1h">All Categories</div>
       <ul class="cat-list">
         <li v-for="(category, idx) in categories" :key="idx" @click="setSidebarOff">
@@ -30,8 +30,8 @@ const categories = computed(() => categoryStore.categories);
           </router-link>
         </li>
       </ul>
-    </div>
-  </aside>
+    </section>
+  </menu>
 </template>
 
 <style scoped lang="scss">
