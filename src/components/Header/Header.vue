@@ -10,23 +10,31 @@ import Navbar from "../Navbar/Navbar.vue";
           <aside class="header-cnt-top-l">
             <ul class="d-flex top-links align-items-center">
               <li>
-                <router-link to="/seller">Seller Center</router-link>
+                <router-link to="/">Seller Center</router-link>
               </li>
               <li class="vert-line"></li>
               <li>
-                <router-link to="/download">Download</router-link>
+                <router-link to="/">Download</router-link>
               </li>
               <li class="vert-line"></li>
               <li class="d-flex align-items-center">
                 <span class="fs-5">Follow us on</span>
                 <ul class="social-links d-flex align-items-center">
                   <li class="mx-2">
-                    <a aria-label="facebook" href="www.facebook.com" class="fs-5 p-2 d-inline-flex align-items-center justify-content-center">
+                    <a
+                      aria-label="facebook"
+                      href="www.facebook.com"
+                      class="fs-5 p-2 d-inline-flex align-items-center justify-content-center"
+                    >
                       <i class="bi bi-facebook"></i>
                     </a>
                   </li>
                   <li class="mx-2">
-                    <a aria-label="instagram" href="www.instagram.com" class="fs-5 p-2 d-inline-flex align-items-center justify-content-center">
+                    <a
+                      aria-label="instagram"
+                      href="www.instagram.com"
+                      class="fs-5 p-2 d-inline-flex align-items-center justify-content-center"
+                    >
                       <i class="bi bi-instagram"></i>
                     </a>
                   </li>
