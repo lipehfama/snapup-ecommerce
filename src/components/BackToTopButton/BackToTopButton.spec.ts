@@ -3,13 +3,19 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import BackToTopButton from "./BackToTopButton.vue";
 
+const setScrollPosition = (value: number) => {
+  Object.defineProperty(window, "scrollY", {
+    value,
+    writable: true,
+    configurable: true
+  });
+
+  window.dispatchEvent(new Event("scroll"));
+};
+
 describe("BackToTopButton", () => {
   beforeEach(() => {
-    Object.defineProperty(window, "scrollY", {
-      value: 0,
-      writable: true,
-      configurable: true
-    });
+    setScrollPosition(0);
 
     window.scrollTo = vi.fn();
   });
@@ -23,13 +29,7 @@ describe("BackToTopButton", () => {
   it("remains hidden before 300 pixels", async () => {
     const wrapper = mount(BackToTopButton);
 
-    Object.defineProperty(window, "scrollY", {
-      value: 250,
-      writable: true,
-      configurable: true
-    });
-
-    window.dispatchEvent(new Event("scroll"));
+    setScrollPosition(250);
 
     await wrapper.vm.$nextTick();
 
@@ -39,13 +39,7 @@ describe("BackToTopButton", () => {
   it("appears after scrolling more than 300 pixels", async () => {
     const wrapper = mount(BackToTopButton);
 
-    Object.defineProperty(window, "scrollY", {
-      value: 500,
-      writable: true,
-      configurable: true
-    });
-
-    window.dispatchEvent(new Event("scroll"));
+    setScrollPosition(500);
 
     await wrapper.vm.$nextTick();
 
@@ -53,13 +47,11 @@ describe("BackToTopButton", () => {
   });
 
   it("scrolls smoothly to the top when clicked", async () => {
-    Object.defineProperty(window, "scrollY", {
-      value: 500,
-      writable: true,
-      configurable: true
-    });
-
     const wrapper = mount(BackToTopButton);
+
+    setScrollPosition(500);
+
+    await wrapper.vm.$nextTick();
 
     await wrapper.get("button").trigger("click");
 
@@ -70,16 +62,12 @@ describe("BackToTopButton", () => {
   });
 
   it("has an accessible label", async () => {
-    Object.defineProperty(window, "scrollY", {
-      value: 500,
-      writable: true,
-      configurable: true
-    });
-
     const wrapper = mount(BackToTopButton);
 
-    const button = wrapper.get("button");
+    setScrollPosition(500);
 
-    expect(button.attributes("aria-label")).toBe("Back to top");
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.get("button").attributes("aria-label")).toBe("Back to top");
   });
 });
