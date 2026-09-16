@@ -54,13 +54,13 @@ import Navbar from "../Navbar/Navbar.vue";
               </li>
               <li class="vert-line"></li>
               <li>
-                <router-link to="/">
+                <router-link to="/register">
                   <span class="top-link-itm-txt">Register</span>
                 </router-link>
               </li>
               <li class="vert-line"></li>
               <li>
-                <router-link to="/">
+                <router-link to="/login">
                   <span class="top-link-itm-txt">Log in</span>
                 </router-link>
               </li>
