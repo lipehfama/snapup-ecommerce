@@ -14,7 +14,7 @@ import Navbar from "../Navbar/Navbar.vue";
               </li>
               <li class="vert-line"></li>
               <li>
-                <router-link to="/">Download</router-link>
+                <router-link to="/download">Download</router-link>
               </li>
               <li class="vert-line"></li>
               <li class="d-flex align-items-center">
@@ -45,7 +45,7 @@ import Navbar from "../Navbar/Navbar.vue";
           <aside class="header-cnt-top-r">
             <ul class="top-links d-flex align-items-center">
               <li>
-                <router-link to="/" class="top-link-itm">
+                <router-link to="/support" class="top-link-itm">
                   <span class="top-link-itm-ico mx-2">
                     <i class="bi bi-question-circle-fill"></i>
                   </span>
