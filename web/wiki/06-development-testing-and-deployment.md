@@ -47,19 +47,76 @@ this behavior in the [`paths` option](https://www.typescriptlang.org/tsconfig/pa
 
 ## Testing
 
-`vitest.config.ts` reuses the Vite configuration and selects `jsdom`, which simulates browser APIs
-for component tests. Vitest supports Vue component tests, TypeScript, mocks, coverage, and DOM
-environments; see [Vitest features](https://vitest.dev/guide/features.html).
+`vitest.config.ts` mergesmerges the Vite config (so the `@` alias and Vue plugin apply to tests) and
+selects `jsdom`, which simulates browser APIs (`localStorage`, `window.scrollY`, DOM events) for
+component tests. Run with `bun run test:unit`;; run aa single file with
+`bunx vitest run src/storesstores/cartStorecartStore.spec.ts`.
 
-No tests currently exist. The first useful suites would cover:
+FiveFive spec files currently exist,, co-located withwith thethe codecode theythey cover:
 
-1. discounted-price calculation;
-2. adding a new cart line;
-3. merging a repeated cart line;
-4. stock limits and decrement limits;
-5. cart persistence and invalid stored JSON;
-6. product/category/search store success and failure states; and
-7. route-parameter changes on product and search pages.
+```text
+src/stores/cartStore.spec.ts                          (12 tests)
+src/stores/productStore.spec.ts                       (5 tests)
+src/components/Product/Product.spec.ts                (7 tests)
+src/components/CartModal/CartModal.spec.ts            (6 tests)
+src/components/BackToTopButton/BackToTopButton.spec.ts (5 tests)
+```
+
+### Store tests — cart (`cartStore.spec.ts`)
+
+Each test starts from a clean slate — `localStorage.clear(); setActivePinia(createPinia())` —
+then acts and asserts. Techniques worth reusing:
+
+- **Factory function with overrides.** `createCartItem(overrides: Partial<ICartItems>)` builds a
+  valid 14-field cart item via `{ ...defaults, ...overrides }`. Each test declares only what it
+  varies (e.g. `{ stock: 2, quantity: 2 }`), which keeps boundary tests readable.
+- **Persistence assertions.** After `addToCart`, the test reads
+  `JSON.parse(localStorage.getItem("cart"))` — it verifies the `storeInLocalStorage` side effect,
+  not just in-memory state.
+- **Boundary clamping.** INC at `quantity === stock` stays put; DEC at `quantity === 1` stays put.
+  These guard the `Math.min(qty + 1, stock)` / `Math.max(qty - 1, 1)` logic in `toggleCartQty`.
+- **Totals.** Two lines with `totalPrice` 80 + 40 → `getCartTotal()` yields `totalAmount === 120`,
+  `itemsCount === 2` (note: line count, not unit count — see the roadmap).
+- **Fake timers for the toast.** `vi.useFakeTimers()` → `setCartMessageOn()` asserts `true` →
+  `vi.advanceTimersByTime(2000)` asserts `false` → `vi.useRealTimers()`. Tests the auto-dismiss
+  `setTimeout` without waiting two real seconds.
+
+### Store tests — product (`productStore.spec.ts`)
+
+Pattern: fresh Pinia + `vi.restoreAllMocks()` → stub `fetch` → `await store.fetchX()` → assert
+state, status, and request URL. Key points:
+
+- **Stubbing globals.** `vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ json: … }))` replaces
+  the global `fetch` for that test only — no HTTP is ever performed. Success tests assert the URL
+  with `expect.stringContaining("products?limit=10")` / `"products/1"` and `…Status === SUCCEEDED`.
+- **Failure path.** `mockRejectedValue(new Error("Network error"))` → `…Status === FAILED`.
+  `console.error` is silenced via `vi.spyOn(console, "error").mockImplementation(() => {})` and
+  restored, so expected errors don't pollute output. Remember `fetch` only rejects on
+  network-level failures — HTTP 404/500 still resolve (see the roadmap item on `response.ok`).
+
+### Component tests (`@vue/test-utils` `mount`)
+
+- **Product.spec (7 tests).** Mounts with a `product` prop and asserts rendered title, category,
+  brand, first image `src`/`alt`, formatted prices (`$100.00` / `$80.00` via `formatPrice`), and
+  `20% Off`. `RouterLink` is stubbed with `<a><slot /></a>` so no router is needed. The brand
+  fallback (`brand || category`) gets its own test with `brand: ""`.
+- **CartModal.spec (6 tests).** Mounts with a `carts` prop: empty state (`No products yet`),
+  single/multiple lines (`.cart-modal-item` count), discounted price text, thumbnail `src`, and the
+  `view my shopping cart` action. Uses spread overrides (`{ ...cartItem, id: 2, title: … }`).
+- **BackToTopButton.spec (5 tests).** Redefines `window.scrollY` via `Object.defineProperty`
+  (read-only in jsdom, hence the helper), dispatches a `scroll` event, awaits
+  `wrapper.vm.$nextTick()`, then asserts button visibility around the 300 px threshold, the
+  `window.scrollTo({ top: 0, behavior: "smooth" })` call (mocked with `vi.fn()`), and the
+  `aria-label="Back to top"`.
+
+### Still untested (next suites to add)
+
+1. `categoryStore` / `searchStore` success + failure (same fetch-stub pattern as `productStore`).
+2. `sidebarStore` toggle actions.
+3. Discounted-price helper once it is extracted (currently duplicated in `ProductList` and
+   `ProductSingle`).
+4. Cart persistence with corrupt stored JSON (`JSON.parse` throwing).
+5. Route-parameter changes on product/search pages (currently fetch only in `onMounted`).
 
 ## Production build
 
@@ -79,36 +136,117 @@ bun run preview
 
 `vite.config.ts` configures `vite-plugin-pwa` with:
 
-- `registerType: "autoUpdate"`;
-- a web app manifest;
-- installable icons;
-- generated service-worker precaching; and
-- runtime caching for product images.
+- `registerType: "autoUpdate"` — service worker updates automatically on navigation;
+- a web app manifest (`name: "Snapup Ecommerce"`, `short_name: "Snapup"`, standalone display);
+- installable icons (192×192 and 512×512 from `public/`);
+- generated service-worker precaching (all static assets in `dist/`);
+- runtime caching for product images from DummyJSON via `CacheFirst` strategy:
+  - Pattern: `https://i.dummyjson.com/data/products/**/*.{jpg,png,webp}`
+  - Max 500 entries, 2-year TTL
+  - Only caches 200 responses
+- `registerType: "autoUpdate"` — service worker updates automatically on navigation;
+- a web app manifest (`name: "Snapup Ecommerce"`, `short_name: "Snapup"`, standalone display);
+- installable icons (192×192 and 512×512 from `public/`);
+- generated service-worker precaching (all static assets in `dist/`);
+- runtime caching for product images from DummyJSON via `CacheFirst` strategy:
+  - Pattern: `https://i.dummyjson.com/data/products/**/*.{jpg,png,webp}`
+  - Max 500 entries, 2-year TTL
+  - Only caches 200 responses
 
-`src/main.ts` imports `registerSW` from `virtual:pwa-register`. References:
+`src/main.ts` imports `registerSW` from `virtual:pwa-register` and calls it when
+`"serviceWorker" in navigator`. The generated SW handles:
+
+- **Precache**: all `dist/` assets served cache-first
+- **Navigation fallback**: `index.html` for SPA routes
+- **Runtime**: product images cached per the rule above
+
+Debugging tip: Because a service worker can serve cached assets, use a hard refresh
+(`Ctrl+Shift+R`) or clear site data (Application → Storage → Clear site data) when a style
+appears not to update. In development, the SW is also active (`devOptions: { enabled: true }`).
+
+### Manifest icon path issue
+
+The manifest currently references `icons/icon-512x512.png` but the file lives at
+`public/icon-512x512.png`. This causes a 404 on install. Fix by either moving the file or
+updating the manifest path in `vite.config.ts`.
+
+References:
+`src/main.ts` imports `registerSW` from `virtual:pwa-register` and calls it when
+`"serviceWorker" in navigator`. The generated SW handles:
+
+- **Precache**: all `dist/` assets served cache-first
+- **Navigation fallback**: `index.html` for SPA routes
+- **Runtime**: product images cached per the rule above
+
+Debugging tip: Because a service worker can serve cached assets, use a hard refresh
+(`Ctrl+Shift+R`) or clear site data (Application → Storage → Clear site data) when a style
+appears not to update. In development, the SW is also active (`devOptions: { enabled: true }`).
+
+### Manifest icon path issue
+
+The manifest currently references `icons/icon-512x512.png` but the file lives at
+`public/icon-512x512.png`. This causes a 404 on install. Fix by either moving the file or
+updating the manifest path in `vite.config.ts`.
+
+References:
 
 - [Registering the service worker](https://vite-pwa-org.netlify.app/guide/register-service-worker)
 - [Automatic updates](https://vite-pwa-org.netlify.app/guide/auto-update)
 - [Service-worker precaching](https://vite-pwa-org.netlify.app/guide/service-worker-precache)
-
-Because a service worker can serve cached assets, use a hard refresh or clear site data when
-debugging a style that appears not to update.
+-- [Runtime[Runtime caching](https://vite-pwa-orgcaching](https://vite-pwa-org.netlify.app/guide/runtime-caching)
 
 ## Vercel deployment
 
 `vercel.json` rewrites every request to `/index.html`. This is necessary for deep links such as
 `/product/12`: Vercel serves the SPA entry, then Vue Router selects the view.
 
+```json
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
 This configuration matches Vercel's documented
 [Vite SPA deep-linking setup](https://vercel.com/docs/frameworks/frontend/vite) and
 [rewrite behavior](https://vercel.com/docs/routing/rewrites).
 
-Vercel should use:
+Vercel project settings should bebe:
 
 ```text
 Build command: bun run build
 Output directory: dist
+Framework preset: Vite
 ```
+
+### Production checklist
+
+Before deploying:
+
+1. `bun run type-check` — zero TypeScript errors
+2. `bun run build` — successful production bundle
+3. `bun run preview` — smoke test the built `dist/` locally
+4. Verify `dist/index.html` contains hashed asset filenames (cache busting)
+5. Confirm `vercel.json` is committed
 
 Commit `package.json`, `bun.lock`, TypeScript configuration, and application changes together so
 production installs the same dependency graph tested locally.
+
+### Alternative static hosts
+
+The `dist/` folder is a standard static site. It also works on:
+
+- **Netlify**: add `_redirects` file with `/* /index.html 200`
+- **Cloudflare Pages**: build command `bun run build`, output `dist`
+- **GitHub Pages**: push `dist/` to `gh-pages` branch (with `base` in `vite.config.ts`)
+- **Any static CDN**: upload `dist/` contents
+
+---
+
+## Next steps
+
+- [Architecture & data flow](02-architecture-and-data-flow.md) — build-time code splitting
+- [Known issues & roadmap](07-known-issues-and-roadmap.md) — testing gaps
+- [TS/JS concepts](09-typescript-javascript-concepts.md) — test patterns (`vi.stubGlobal`, fake timers)
+- [References](08-references.md) — Vitest, Pinia testing, Vite PWA docs

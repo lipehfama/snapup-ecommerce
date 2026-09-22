@@ -3,22 +3,83 @@
 ## High-level architecture
 
 ```mermaid
-flowchart TD
-    Browser[Browser] --> Main[src/main.ts]
-    Main --> App[src/App.vue]
-    App --> Shell[Header + Sidebar + Footer]
-    App --> Router[router-view]
-    Router --> Views[Route-level views]
-    Views --> Components[Reusable components]
-    Views --> Stores[Pinia stores]
-    Components --> Stores
-    Stores --> API[DummyJSON API]
-    Stores --> Storage[localStorage]
+flowchart TB
+    subgraph Entry["Entry (src/main.ts)"]
+        MAIN["createApp(App)\napp.use(Pinia)\napp.use(router)\nregisterSW()"]
+    end
+
+    subgraph Shell["App.vue shell (always mounted)"]
+        HDR["Header → Navbar\n(search, sidebar toggle, cart)"]
+        SB["Sidebar\n(category links)"]
+        RV["router-view"]
+        FTR["Footer"]
+        BTT["BackToTopButton"]
+    end
+
+    subgraph Router["Vue Router — 9 routes"]
+        HOME["/ → Home"]
+        PROD["/product/:id → ProductSingle"]
+        CAT["/category/:category → CategoryProduct"]
+        CART["/cart → Cart"]
+        SEARCH["/search/:searchTerm → Search"]
+        MISC["/support · /download · /login · /register"]
+    end
+
+    subgraph Stores["Pinia stores"]
+        PS["productStore"]
+        CS["categoryStore"]
+        SS["searchStore"]
+        CARTS["cartStore ↔ localStorage"]
+        SBS["sidebarStore"]
+    end
+
+    EXT[("DummyJSON API\nhttps://dummyjson.com")]
+
+    Browser[Browser] --> MAIN
+    MAIN --> HDR & SB & RV & FTR & BTT
+    RV --> Router
+    Router --> Stores
+    Stores --> EXT
 ```
 
 This is a client-side SPA. Vue Router changes the component shown inside `router-view` without
 requesting a new HTML document for every navigation. Vue Router is Vue's official client-side
 routing solution; see the [Vue Router guide](https://router.vuejs.org/guide/).
+
+## Page layout (App shell)
+
+Every route renders inside the same persistent shell owned by [`src/App.vue`](../src/App.vue).
+Only `router-view` (and the conditional `CartMessage` toast) changes per page:
+
+```mermaid
+flowchart TB
+    subgraph VIEWPORT["Browser viewport"]
+        direction TB
+        HEADER["Header (top links + Navbar:\nlogo, search, cart button)"]
+        BODY["router-view\n(Home / ProductSingle / CategoryProduct /\nCart / Search / Support / Download / Login / Register)"]
+        FOOTER["Footer (policy/about links)"]
+    end
+    SIDEBAR["Sidebar (off-canvas drawer)\nAll Categories → /category/:slug"] -.- BODY
+    TOAST["CartMessage toast (overlay)\nshown 2 s after add-to-cart"] -.- BODY
+    TOPBTN["BackToTopButton (floating)\nappears after 300 px scroll"] -.- VIEWPORT
+
+    HEADER --> BODY --> FOOTER
+```
+
+```text
+┌─────────────────────────────────────┐
+│ Header → Navbar                     │
+├──────┬──────────────────────────────┤
+│ Side │ router-view                  │
+│ bar  │                              │
+│ (hid │                              │
+│ den) │                              │
+├──────┴──────────────────────────────┤
+│ Footer                              │
+└─────────────────────────────────────┘
+  + CartMessage overlay (conditional)
+  + BackToTopButton (floating, >300px)
+```
 
 ## Startup sequence
 
@@ -125,3 +186,12 @@ reload.
 - `src/utils/helpers.ts` formats prices in US dollars.
 - `src/utils/images.ts` centralizes imported image assets.
 - `src/utils/status.ts` centralizes request status values.
+
+---
+
+## Next steps
+
+- [Folder structure](03-folder-structure.md) — where files live
+- [Components, pages & routes](04-components-pages-and-routes.md) — UI inventory
+- [Pinia stores deep-dive](06-development-testing-and-deployment.md#pinia-stores) — store internals
+- [Known issues & roadmap](07-known-issues-and-roadmap.md) — architecture-level fixes
