@@ -18,6 +18,7 @@ browser.
 6. [Development, testing, PWA, and deployment](06-development-testing-and-deployment.md)
 7. [Known issues and recommended roadmap](07-known-issues-and-roadmap.md)
 8. [Official documentation references](08-references.md)
+9. [TypeScript and JavaScript concepts](09-typescript-javascript-concepts.md)
 
 ## Quick facts
 
@@ -32,7 +33,7 @@ browser.
 | Build tool | Vite |
 | Package manager | Bun |
 | Type checking | TypeScript 6.0.3 and `vue-tsc` |
-| Tests | Vitest configured; no test suites currently exist |
+| Tests | Vitest + Vue Test Utils; 55 suites (cart/product stores, Product, CartModal, BackToTopButton) |
 | Deployment | Static Vite build configured for Vercel |
 | Offline support | Generated service worker through `vite-plugin-pwa` |
 
@@ -58,3 +59,18 @@ The [Vue Single-File Component guide](https://vuejs.org/guide/scaling-up/sfc) ex
 
 Update this wiki whenever routes, stores, external APIs, deployment behavior, or major folder
 conventions change. Keep links pointed at primary documentation whenever possible.
+
+---
+
+## Quick navigation
+
+| Need to… | Go to |
+|---|---|
+| Understand the big picture | [Architecture & data flow](02-architecture-and-data-flow.md) |
+| Find a file / learn conventions | [Folder structure](03-folder-structure.md) |
+| See what components exist | [Components, pages & routes](04-components-pages-and-routes.md) |
+| Style or fix a UI issue | [Styling & accessibility](05-styling-and-accessibility.md) |
+| Run tests / build / deploy | [Development, testing & deployment](06-development-testing-and-deployment.md) |
+| Fix a bug / plan work | [Known issues & roadmap](07-known-issues-and-roadmap.md) |
+| Learn a TS/JS pattern used here | [TS/JS concepts](09-typescript-javascript-concepts.md) |
+| Find official docs | [References](08-references.md) |

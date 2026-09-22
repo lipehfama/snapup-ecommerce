@@ -40,6 +40,42 @@ Vue recommends Single-File Components for non-trivial frontends with a build ste
 [Vue Single-File Components](https://vuejs.org/guide/scaling-up/sfc) and
 [`<script setup>`](https://vuejs.org/api/sfc-script-setup.html).
 
+## Architecture snapshot
+
+```mermaid
+flowchart TB
+    subgraph Runtime["Runtime dependencies"]
+        BUN["Bun 1.x\npackage manager + runner"]
+        VITE["Vite 8\ndev server + bundler"]
+        TSC["TypeScript 6.0.3 + vue-tsc\ntype checking"]
+    end
+
+    subgraph Framework["Framework layer"]
+        VUE["Vue 3\nComposition API + SFC"]
+        ROUTER["Vue Router 5\nHTML5 history"]
+        PINIA["Pinia 4\nstores"]
+    end
+
+    subgraph UI["UI & styling"]
+        BS["Bootstrap 5.3\nutilities + JS"]
+        BSI["Bootstrap Icons\nicon font"]
+        SASS["Sass 1.102\nmodules + color"]
+    end
+
+    subgraph Quality["Quality & PWA"]
+        VTEST["Vitest 4 + jsdom\nunit + component tests"]
+        ESLINT["ESLint + Vue plugin\nlinting"]
+        PRETTIER["Prettier 3\nformatting"]
+        PWA["vite-plugin-pwa\nWorkbox SW + manifest"]
+    end
+
+    BUN --> VITE --> VUE
+    VITE --> ROUTER & PINIA
+    VUE --> BS & BSI & SASS
+    VTEST -.-> VITE
+    PWA -.-> VITE
+```
+
 ## Primary user journeys
 
 ### Browse the homepage
@@ -74,3 +110,18 @@ Vue recommends Single-File Components for non-trivial frontends with a build ste
 The persistence behavior is based on the browser
 [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API). `localStorage`
 is scoped to the site origin and normally persists across browser sessions.
+
+## Build outputs
+
+- `dist/` — Vite production bundle (static assets, hashed filenames, `index.html`).
+- `dev-dist/` — PWA development build (service worker active in dev).
+- `vercel.json` rewrites all paths to `index.html` for SPA deep-linking.
+
+---
+
+## Next steps
+
+- [Architecture & data flow](02-architecture-and-data-flow.md) — how the pieces connect
+- [Folder structure](03-folder-structure.md) — where files live
+- [Components, pages & routes](04-components-pages-and-routes.md) — UI inventory
+- [Known issues & roadmap](07-known-issues-and-roadmap.md) — what needs fixing

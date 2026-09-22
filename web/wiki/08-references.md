@@ -43,6 +43,7 @@ project documentation is preferred over tutorials or third-party summaries.
 ## TypeScript
 
 - [TypeScript documentation](https://www.typescriptlang.org/docs/)
+- [Interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html)
 - [TSConfig reference](https://www.typescriptlang.org/tsconfig/)
 - [`paths` compiler option](https://www.typescriptlang.org/tsconfig/paths.html)
 
@@ -53,6 +54,8 @@ project documentation is preferred over tutorials or third-party summaries.
 - [Deploying a static site](https://vite.dev/guide/static-deploy.html)
 - [Vitest guide](https://vitest.dev/guide/)
 - [Vitest features](https://vitest.dev/guide/features.html)
+- [Vitest mocking (`vi.stubGlobal`, `vi.spyOn`, fake timers)](https://vitest.dev/api/)
+- [Pinia testing guide](https://pinia.vuejs.org/cookbook/testing.html)
 - [Vue Test Utils](https://test-utils.vuejs.org/)
 
 ## Bun
@@ -85,3 +88,42 @@ project documentation is preferred over tutorials or third-party summaries.
 - [Web Content Accessibility Guidelines 2.2](https://www.w3.org/TR/WCAG22/)
 - [Contrast minimum criterion](https://www.w3.org/TR/WCAG22/#contrast-minimum)
 - [WAI accessibility fundamentals](https://www.w3.org/WAI/fundamentals/)
+
+## Project-specific deep-dive links
+
+These MDN/Vitest/Vue pages directly explain patterns used in SnapUp:
+
+- [Object.freeze() — STATUS enum](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/freeze)
+- [Optional chaining (`?.`) — guards for pre-fetch state](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Optional_chaining)
+- [Nullish coalescing (`??`) — default fallbacks](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing)
+- [Math.min()/Math.max() — qty clamping](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/min)
+- [setTimeout / fake timers — toast auto-dismiss](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout)
+- [localStorage API — cart persistence](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)
+- [JSON.parse()/stringify() — serialization](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON)
+- [vi.stubGlobal() — mocking fetch](https://vitest.dev/api/vi.html#vi-stubglobal)
+- [vi.spyOn() — silencing console.error](https://vitest.dev/api/vi.html#vi-spyon)
+- [vi.useFakeTimers() — controlled time in tests](https://vitest.dev/api/vi.html#vi-usefaketimers)
+- [storeToRefs() — reactive destructuring](https://pinia.vuejs.org/api/modules/pinia.html#storetorefs)
+- [defineStore() Options API — store pattern](https://pinia.vuejs.org/core-concepts/)
+- [Computed vs Methods — caching](https://vuejs.org/guide/essentials/computed.html#computed-vs-methods)
+- [watch() — reacting to async data](https://vuejs.org/guide/essentials/watchers.html)
+- [Dynamic import() — route code splitting](https://router.vuejs.org/guide/advanced/lazy-loading.html)
+- [Sass @use — module system](https://sass-lang.com/documentation/at-rules/use/)
+- [Sass color module — palette manipulation](https://sass-lang.com/documentation/modules/color/)
+- [Workbox CacheFirst — image runtime caching](https://developer.chrome.com/docs/workbox/modules/workbox-strategies/#cachefirst)
+
+---
+
+## Wiki navigation
+
+| Page | Purpose |
+|---|---|
+| [README](README.md) | Start here — overview & quick links |
+| [01 Project overview](01-project-overview.md) | Purpose, tech stack, user journeys |
+| [02 Architecture](02-architecture-and-data-flow.md) | Diagrams, stores, data flows |
+| [03 Folder structure](03-folder-structure.md) | Conventions, file locations |
+| [04 Components](04-components-pages-and-routes.md) | All components, routes, props |
+| [05 Styling](05-styling-and-accessibility.md) | Sass, tokens, accessibility |
+| [06 Dev/Test/Deploy](06-development-testing-and-deployment.md) | Commands, tests, PWA, Vercel |
+| [07 Known issues](07-known-issues-and-roadmap.md) | Prioritized fixes |
+| [09 TS/JS concepts](09-typescript-javascript-concepts.md) | Language patterns by file |

@@ -14,16 +14,107 @@ snapup-ecommerce/
 ├── src/
 │   ├── assets/
 │   │   ├── images/
+│   │   │   ├── correct.png          # checkmark for toasts
+│   │   │   ├── loader.svg           # spinner
+│   │   │   ├── shopping_cart.png    # empty-cart illustration
+│   │   │   ├── slider_img_1.jpg     # carousel slide 1
+│   │   │   └── slider_img_2.jpg     # carousel slide 2
 │   │   └── styles/
-│   ├── components/
+│   │       ├── main.scss            # resets, globals, utilities
+│   │       └── variables.scss       # theme tokens (colors, fonts)
+│   ├── components/                  # reusable presentational components
+│   │   ├── BackToTopButton/
+│   │   ├── CartMessage/
+│   │   ├── CartModal/
+│   │   ├── Footer/
+│   │   ├── Header/
+│   │   ├── HeaderSlider/
+│   │   ├── Loader/
+│   │   ├── Navbar/
+│   │   ├── Product/
+│   │   ├── ProductList/
+│   │   └── Sidebar/
+│   │       ├── main.scss            # resets, globals, utilities
+│   │       └── variables.scss       # theme tokens (colors, fonts)
+│   ├── components/                  # reusable presentational components
+│   │   ├── BackToTopButton/
+│   │   ├── CartMessage/
+│   │   ├── CartModal/
+│   │   ├── Footer/
+│   │   ├── Header/
+│   │   ├── HeaderSlider/
+│   │   ├── Loader/
+│   │   ├── Navbar/
+│   │   ├── Product/
+│   │   ├── ProductList/
+│   │   └── Sidebar/
 │   ├── router/
-│   ├── stores/
-│   ├── types/
-│   ├── utils/
-│   ├── views/
-│   ├── App.vue
-│   └── main.ts
-├── wiki/
+│   │   └── index.ts                 # 9 routes, 8 lazy-loaded
+│   ├── stores/                      # Pinia stores (state + actions)
+│   │   ├── cartStore.ts
+│   │   ├── cartStore.spec.ts
+│   │   ├── categoryStore.ts
+│   │   ├── productStore.ts
+│   │   ├── productStore.spec.ts
+│   │   ├── searchStore.ts
+│   │   ├── searchStore.spec.ts      # not yet implemented
+│   │   ├── sidebarStore.ts
+│   │   └── sidebarStore.spec.ts     # not yet implemented
+│   ├── types/                       # TypeScript interfaces
+│   │   ├── IProducts.ts
+│   │   ├── ICarts.ts
+│   │   └── IFilters.ts
+│   ├── utils/                       # small pure helpers
+│   │   ├── apiURL.ts
+│   │   ├── helpers.ts               # formatPrice()
+│   │   ├── images.ts                # imported asset URLs
+│   │   └── status.ts                # STATUS enum (Object.freeze)
+│   ├── views/                       # route-level pages
+│   │   ├── Cart/
+│   │   ├── CategoryProduct/
+│   │   ├── Download/
+│   │   ├── Home/
+│   │   ├── Login/
+│   │   ├── ProductSingle/
+│   │   ├── Register/
+│   │   ├── Search/
+│   │   └── Support/
+│   ├── App.vue                      # shell: Header + Sidebar + router-view + Footer + BackToTop
+│   └── main.ts                      # entry: CSS, Pinia, Router, SW, mount
+├── wiki/                            # this documentation
+│   │   └── index.ts                 # 9 routes, 8 lazy-loaded
+│   ├── stores/                      # Pinia stores (state + actions)
+│   │   ├── cartStore.ts
+│   │   ├── cartStore.spec.ts
+│   │   ├── categoryStore.ts
+│   │   ├── productStore.ts
+│   │   ├── productStore.spec.ts
+│   │   ├── searchStore.ts
+│   │   ├── searchStore.spec.ts      # not yet implemented
+│   │   ├── sidebarStore.ts
+│   │   └── sidebarStore.spec.ts     # not yet implemented
+│   ├── types/                       # TypeScript interfaces
+│   │   ├── IProducts.ts
+│   │   ├── ICarts.ts
+│   │   └── IFilters.ts
+│   ├── utils/                       # small pure helpers
+│   │   ├── apiURL.ts
+│   │   ├── helpers.ts               # formatPrice()
+│   │   ├── images.ts                # imported asset URLs
+│   │   └── status.ts                # STATUS enum (Object.freeze)
+│   ├── views/                       # route-level pages
+│   │   ├── Cart/
+│   │   ├── CategoryProduct/
+│   │   ├── Download/
+│   │   ├── Home/
+│   │   ├── Login/
+│   │   ├── ProductSingle/
+│   │   ├── Register/
+│   │   ├── Search/
+│   │   └── Support/
+│   ├── App.vue                      # shell: Header + Sidebar + router-view + Footer + BackToTop
+│   └── main.ts                      # entry: CSS, Pinia, Router, SW, mount
+├── wiki/                            # this documentation
 ├── index.html
 ├── package.json
 ├── bun.lock
@@ -32,6 +123,18 @@ snapup-ecommerce/
 ├── vitest.config.ts
 └── vercel.json
 ```
+
+## Directory conventions
+
+| Directory | What belongs here | Naming |
+|---|---|---|
+| `components/` | Reusable UI pieces used by multiple views | `PascalCase/` with `Name.vue` + `Name.scss` |
+| `views/` | Route-level pages (one per route) | Same convention as components |
+| `stores/` | Pinia stores — one file per domain | `featureStore.ts` + `featureStore.spec.ts` |
+| `types/` | Shared interfaces | Singular, PascalCase (`IProducts.ts`) |
+| `utils/` | Pure functions / constants | camelCase (`helpers.ts`, `status.ts`) |
+| `assets/styles/` | Global Sass (variables, resets, utilities) | kebab-case |
+| `assets/images/` | Imported images processed by Vite | — |
 
 ## `public/`
 
@@ -64,6 +167,8 @@ The Vue component loads its scoped stylesheet with:
 @use "./Navbar.scss";
 </style>
 ```
+
+Component tests (when present) live alongside as `Component.spec.ts`.
 
 ## `src/views/`
 
@@ -108,6 +213,9 @@ convention is intended to cover every SFC, it should be standardized separately.
 Pinia stores own state shared across multiple pages or components. Network calls and cart
 persistence are performed here rather than directly in product cards.
 
+Each store file exports a single `useXStore` function created by `defineStore`. State, getters,
+and actions follow the Options-style API. Tests live as `XStore.spec.ts` in the same folder.
+
 ## `src/types/`
 
 Interfaces document API and application data. Future types should distinguish:
@@ -133,3 +241,12 @@ formatting or endpoint helpers, but larger API behavior would be clearer in a de
 - `vercel.json`: rewrites SPA URLs to `index.html`.
 - `bun.lock`: reproducible dependency resolution; Bun recommends committing it. See
   [Bun lockfiles](https://bun.sh/docs/pm/lockfile).
+
+---
+
+## Next steps
+
+- [Architecture & data flow](02-architecture-and-data-flow.md) — how the pieces connect
+- [Components, pages & routes](04-components-pages-and-routes.md) — UI inventory
+- [Styling & accessibility](05-styling-and-accessibility.md) — Sass structure & tokens
+- [TS/JS concepts](09-typescript-javascript-concepts.md) — patterns by file location

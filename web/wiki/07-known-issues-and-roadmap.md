@@ -124,7 +124,47 @@ consider a user-controlled update prompt. The tradeoff is described in the
 
 ## Priority 6: tests
 
-There are no current test files. Begin with cart-store unit tests because incorrect totals directly
-affect user-visible behavior, followed by API-store and route-reactivity tests. See
-[Vitest's feature guide](https://vitest.dev/guide/features.html) for mocks, DOM environments,
+Five suites now exist (cart/product stores, Product, CartModal, BackToTopButton — see the
+[testing guide](06-development-testing-and-deployment.md#testing)). Next, in order of value:
+
+1. `categoryStore` / `searchStore` success and failure states (same fetch-stub pattern as
+   `productStore`);
+2. cart persistence with corrupt stored JSON;
+3. extracted discount-price helper once the duplicated calculation is centralized; and
+4. route-parameter reactivity on product and search pages.
+
+See [Vitest's feature guide](https://vitest.dev/guide/features.html) for mocks, DOM environments,
 coverage, and Vue component testing.
+
+---
+
+## Issue cross-reference table
+
+| Issue | File(s) | Effort | Risk |
+|---|---|---|---|
+| Cart total pricing basis | `cartStore.ts` | S | High (user-facing math) |
+| Out-of-stock add allowed | `ProductSingle.vue`, `cartStore.ts` | S | High |
+| Missing `response.ok` check | `productStore.ts`, `categoryStore.ts`, `searchStore.ts` | S | Medium |
+| Type hierarchy broken | `IFilters.ts`, `types/` | M | Medium (TS errors) |
+| Duplicate category fetches | `Navbar.vue`, `Sidebar.vue`, `Home.vue` | S | Low |
+| No error UI | all views | S | Medium |
+| Product route reuse | `ProductSingle.vue` | S | High |
+| Search UX gaps | `Navbar.vue`, `Search.vue` | M | Medium |
+| Cart JSON.parse unguarded | `cartStore.ts` | S | High (crash on init) |
+| Cart badge semantics | `cartStore.ts`, `Navbar.vue` | S | Low |
+| Manifest icon 404 | `vite.config.ts` | XS | Low |
+| Runtime cache stale regex | `vite.config.ts` | S | Low |
+| Options API → `<script setup>` | `ProductList.vue`, others | M | Low |
+| Extract `services/` layer | new files + stores | L | Medium |
+| STATUS typed union | `status.ts` + stores | XS | Low |
+
+Effort: XS < 30 min, S < 2 h, M < 1 day, L > 1 day
+
+---
+
+## Next steps
+
+- [Architecture & data flow](02-architecture-and-data-flow.md) — understand the systems to fix
+- [Components, pages & routes](04-components-pages-and-routes.md) — locate the files to change
+- [Development, testing & deployment](06-development-testing-and-deployment.md) — test the fixes
+- [TS/JS concepts](09-typescript-javascript-concepts.md) — patterns for correct implementations
