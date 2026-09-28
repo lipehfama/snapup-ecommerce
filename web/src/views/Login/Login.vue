@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import { useAuthStore } from "@/stores/authStore";
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 
 const username = ref("");
@@ -16,9 +17,13 @@ const handleLogin = async () => {
     password: password.value
   });
 
-  if (success) {
-    await router.push("/");
+  if (!success) {
+    return;
   }
+
+  const redirect = typeof route.query.redirect === "string" ? route.query.redirect : "/";
+
+  await router.push(redirect);
 };
 </script>
 
@@ -80,7 +85,7 @@ const handleLogin = async () => {
       </p>
 
       <aside class="auth-notice">
-        <strong>DummyJSON demo account</strong>
+        <strong> Public DummyJSON demo account </strong>
 
         <br />
 
