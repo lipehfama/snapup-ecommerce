@@ -22,3 +22,34 @@
     }
   }
 }
+
+.header-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.header-user-avatar {
+  width: 2.6rem;
+  height: 2.6rem;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.header-user .bi-person-circle {
+  font-size: 2rem;
+}
+
+.header-auth-button {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.header-auth-button:hover {
+  text-decoration: underline;
+}

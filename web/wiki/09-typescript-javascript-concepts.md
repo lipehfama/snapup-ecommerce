@@ -109,6 +109,10 @@ the store; nothing is thrown to the UI. Missing: a `response.ok` check before pa
 
 Reference: [MDN Using Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch).
 
+Note: `authStore.login()` and `restoreSession()` already check `response.ok` before parsing — use
+them as the reference implementation for the catalog stores (see the
+[authentication guide](10-authentication.md#post-authlogin)).
+
 ## `localStorage` is string-only and synchronous
 
 `cartStore.ts` serializes with `JSON.stringify` on every mutation and parses once at store
@@ -153,6 +157,82 @@ component: () => import("@/views/Cart/Cart.vue")
 Each becomes a separate chunk loaded on first navigation — smaller initial bundle.
 
 Reference: [Vue Router lazy loading](https://router.vuejs.org/guide/advanced/lazy-loading).
+
+## Object destructuring + rest properties (token split)
+
+`src/stores/authStore.ts` separates tokens from the persisted user in one statement:
+
+```ts
+const { accessToken, refreshToken, ...user } = data; // data: ILoginResponse
+this.user = user; // IAuthUser — no password, no tokens
+```
+
+Destructuring binds the two named tokens; the rest element (`...user`) collects the remaining
+properties. WHY: the password never reaches `state.user` and tokens get their own storage keys, so
+each can be cleared independently. See the
+[authentication guide](10-authentication.md#why-password-should-not-be-stored-in-pinia-or-sessionstorage).
+
+## `typeof` narrowing for query and error values
+
+`src/views/Login/Login.vue` narrows the redirect query before navigating:
+
+```ts
+const redirect = typeof route.query.redirect === "string" ? route.query.redirect : "/";
+```
+
+`route.query.redirect` is typed `string | string[] | null | undefined`; the `typeof` guard narrows
+it to `string` so `router.push()` type-checks. The same narrowing family appears in
+`authStore.login()` via `error instanceof Error ? error.message : "Something went wrong."` — only
+`Error` is guaranteed to carry `.message`.
+
+Reference: [TypeScript documentation](https://www.typescriptlang.org/docs/).
+
+## `Promise<boolean>` returns for UI branching
+
+`authStore.login()` is typed `async login(credentials: ILoginCredentials): Promise<boolean>`.
+`Login.vue` awaits it and returns early on `false`, leaving `authStore.error` rendered, and only
+calls `router.push()` on `true`. WHY a boolean instead of throwing: the failure case is an expected
+user-facing state (wrong credentials), not an exceptional crash, so the caller branches rather than
+catches.
+
+## `try/catch/finally` for loading + error states
+
+```ts
+this.isLoading = true; this.error = null;
+try { /* fetch, response.ok check, persist */ return true; }
+catch (error) { this.error = /* narrowed message */; return false; }
+finally { this.isLoading = false; }
+```
+
+`finally` guarantees the submit button leaves its `Logging in...` state even when the request
+throws — otherwise a network failure would freeze the form. `getStoredUser()` uses a smaller
+`try/catch` around `JSON.parse` so corrupt `sessionStorage` falls back to `null` instead of
+crashing store setup.
+
+## `ref()`, `v-model`, and `@submit.prevent` (Login form)
+
+`Login.vue` holds form state in `ref("")` (`username`, `password`), binds inputs with
+`v-model="username"`, and handles `<form @submit.prevent="handleLogin">`:
+
+- `ref()` (see [Reactivity fundamentals](https://vuejs.org/guide/essentials/reactivity-fundamentals.html))
+  makes each keystroke reactive without manual DOM reads; `.value` in script, auto-unwrapped in
+  template.
+- `v-model` is two-way binding sugar over `:value` + `@input`.
+- `@submit.prevent` stops the native full-page submit so the SPA handles login in place, while
+  keeping Enter-key submission and `required` validation.
+
+Full example in the [authentication guide](10-authentication.md#login-form-mechanics).
+
+## `sessionStorage` vs `localStorage`
+
+`cartStore` uses `localStorage` (persists across sessions); `authStore` uses `sessionStorage`
+(cleared when the tab session ends) for `snapup-user`, `snapup-access-token`, and
+`snapup-refresh-token`. Rule of thumb applied here: low-risk convenience data (cart) favors
+persistence; credentials favor a shorter exposure window. Both are synchronous, string-only, and
+origin-scoped — hence the `JSON.stringify`/`JSON.parse` round-trip.
+
+References: [MDN sessionStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage),
+[MDN Web Storage](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API).
 
 ## `Partial<T>` + spread factory in tests
 

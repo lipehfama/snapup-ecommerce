@@ -136,3 +136,19 @@
     padding-top: 2.8rem;
   }
 }
+
+.auth-error {
+  margin: 0;
+  padding: 1rem 1.2rem;
+  border-radius: 0.6rem;
+  color: #b42318;
+  background: #fef3f2;
+  font-size: 1.35rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.auth-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}

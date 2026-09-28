@@ -9,16 +9,25 @@ SnapUp demonstrates the main frontend interactions of an ecommerce storefront:
 - searching for products;
 - viewing a product detail page;
 - choosing a quantity;
-- adding, updating, and removing cart entries; and
-- retaining the cart after a browser reload.
+- adding, updating, and removing cart entries;
+- retaining the cart after a browser reload;
+- logging in with a DummyJSON demo account and viewing a protected profile page.
 
 It is best treated as a learning or portfolio application. It does **not** currently contain a
-backend, user accounts, payment processing, inventory reservations, checkout fulfillment, or an
-order database.
+backend ofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofof its ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits own, payment processing, inventory reservations, checkout fulfillment, or an
+order database. Authentication is a frontend session against the third-party DummyJSON auth API
+(`POST /auth/login`, `GET /auth/me`); full details are in the
+[authentication guide](10-authentication.md).
+backend ofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofofof its ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits ownits own, payment processing, inventory reservations, checkout fulfillment, or an
+order database. Authentication is a frontend session against the third-party DummyJSON auth API
+(`POST /auth/login`, `GET /auth/me`); full details are in the
+[authentication guide](10-authentication.md).
 
 The catalog is supplied by the
 [DummyJSON products API](https://dummyjson.com/docs/products), which is intended for prototypes and
-testing.
+testing. Login and session validation use the
+[DummyJSON auth API](https://dummyjson.com/docs/auth) with the public demo account shown on the
+login page.
 
 ## Technology choices
 
@@ -27,7 +36,7 @@ testing.
 | Vue 3 | Components and reactive UI | `src/**/*.vue` |
 | TypeScript | Static types and editor checking | `src/**/*.ts`, `tsconfig*.json` |
 | Vue Router | Maps URLs to page components | `src/router/index.ts` |
-| Pinia | Shared product, category, search, cart, and sidebar state | `src/stores/` |
+| Pinia | Shared product, category, search, cart, sidebar, and authauthauthauthauthauthauthauthauthauthauthauthauthauthauthauthauthauth state | `src/stores/` |
 | Bootstrap | Grid, spacing, typography, icons, and carousel behavior | imported by `src/main.ts` |
 | Sass | Global theme and component-specific styling | `src/**/*.scss` |
 | Vite | Development server and production build | `vite.config.ts` |
@@ -107,9 +116,44 @@ flowchart TB
 4. The cart store updates Pinia state and serializes the cart to `localStorage`.
 5. The navbar reacts to the state change and updates its cart indicator.
 
+### Log in and view the profile
+
+1. `/login` collects a username and password with `v-model` refs and calls
+   `authStore.login()` on `@submit.prevent`.
+2. The store sends `POST /auth/login`, splits tokens from the user object, and persists both
+   to `sessionStorage`.
+3. The Header reacts to `isAuthenticated` and swaps guest links for the user avatar, name,
+   and log-out button.
+4. `/profile` (guarded by `meta.requiresAuth` + `router.beforeEach`) renders the stored user;
+   unauthenticated visits are sent to `/login?redirect=/profile` and return after login.
+5. On every app startup `App.vue` calls `authStore.restoreSession()` (`GET /auth/me`) to
+   revalidate the stored token or log out when it expired.
+
+See the [authentication guide](10-authentication.md) for why the password is never persisted
+and why client-side guards are UX, not backend security.
+
+### Log in and view the profile
+
+1. `/login` collects a username and password with `v-model` refs and calls
+   `authStore.login()` on `@submit.prevent`.
+2. The store sends `POST /auth/login`, splits tokens from the user object, and persists both
+   to `sessionStorage`.
+3. The Header reacts to `isAuthenticated` and swaps guest links for the user avatar, name,
+   and log-out button.
+4. `/profile` (guarded by `meta.requiresAuth` + `router.beforeEach`) renders the stored user;
+   unauthenticated visits are sent to `/login?redirect=/profile` and return after login.
+5. On every app startup `App.vue` calls `authStore.restoreSession()` (`GET /auth/me`) to
+   revalidate the stored token or log out when it expired.
+
+See the [authentication guide](10-authentication.md) for why the password is never persisted
+and why client-side guards are UX, not backend security.
+
 The persistence behavior is based on the browser
 [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API). `localStorage`
-is scoped to the site origin and normally persists across browser sessions.
+is scoped to the site origin and normally persists across browser sessions; the auth session
+instead uses [`sessionStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage),
+which is cleared when the tab session ends — see the
+[authentication guide](10-authentication.md) for why credentials favor the shorter lifetime.
 
 ## Build outputs
 

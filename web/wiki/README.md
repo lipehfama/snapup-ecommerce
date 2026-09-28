@@ -19,6 +19,7 @@ browser.
 7. [Known issues and recommended roadmap](07-known-issues-and-roadmap.md)
 8. [Official documentation references](08-references.md)
 9. [TypeScript and JavaScript concepts](09-typescript-javascript-concepts.md)
+10. [Authentication](10-authentication.md)
 
 ## Quick facts
 
@@ -26,9 +27,10 @@ browser.
 |---|---|
 | Application type | Client-rendered single-page application (SPA) |
 | Product source | DummyJSON REST API |
-| Shared state | Pinia stores |
+| Shared state | Pinia stores (catalog, cart, sidebar, auth) |
 | Cart persistence | Browser `localStorage` |
-| Routing | Vue Router with HTML5 history |
+| Auth persistence | Browser `sessionStorage` (user + tokens, cleared on tab close) |
+| Routing | Vue Router with HTML5 history (10 routes, `/profile` guarded) |
 | Styling | Bootstrap utilities plus scoped Sass |
 | Build tool | Vite |
 | Package manager | Bun |
@@ -69,6 +71,7 @@ conventions change. Keep links pointed at primary documentation whenever possibl
 | Understand the big picture | [Architecture & data flow](02-architecture-and-data-flow.md) |
 | Find a file / learn conventions | [Folder structure](03-folder-structure.md) |
 | See what components exist | [Components, pages & routes](04-components-pages-and-routes.md) |
+| Learn authentication | [Authentication](10-authentication.md) |
 | Style or fix a UI issue | [Styling & accessibility](05-styling-and-accessibility.md) |
 | Run tests / build / deploy | [Development, testing & deployment](06-development-testing-and-deployment.md) |
 | Fix a bug / plan work | [Known issues & roadmap](07-known-issues-and-roadmap.md) |

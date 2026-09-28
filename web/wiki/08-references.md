@@ -19,9 +19,11 @@ project documentation is preferred over tutorials or third-party summaries.
 
 - [Vue Router guide](https://router.vuejs.org/guide/)
 - [Dynamic route matching](https://router.vuejs.org/guide/essentials/dynamic-matching.html)
+- [Programmatic navigation (`router.push`)](https://router.vuejs.org/guide/essentials/navigation.html)
 - [Lazy-loading routes](https://router.vuejs.org/guide/advanced/lazy-loading)
 - [Route data fetching](https://router.vuejs.org/guide/advanced/data-fetching.html)
-- [Navigation guards](https://router.vuejs.org/guide/advanced/navigation-guards.html)
+- [Navigation guards (`beforeEach`)](https://router.vuejs.org/guide/advanced/navigation-guards.html)
+- [Route meta fields (`meta.requiresAuth`)](https://router.vuejs.org/guide/advanced/meta.html)
 
 ## Pinia
 
@@ -32,18 +34,21 @@ project documentation is preferred over tutorials or third-party summaries.
 - [Actions](https://pinia.vuejs.org/core-concepts/actions.html)
 - [Testing stores](https://pinia.vuejs.org/cookbook/testing.html)
 
-## Product API and browser APIs
+## Product, auth, and browser APIs
 
 - [DummyJSON products, search, and categories](https://dummyjson.com/docs/products)
+- [DummyJSON authentication (`POST /auth/login`, `GET /auth/me`)](https://dummyjson.com/docs/auth)
 - [MDN: Using the Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)
 - [MDN: `Response.ok`](https://developer.mozilla.org/en-US/docs/Web/API/Response/ok)
 - [MDN: Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)
 - [MDN: `localStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)
+- [MDN: `sessionStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage)
 
 ## TypeScript
 
 - [TypeScript documentation](https://www.typescriptlang.org/docs/)
 - [Interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html)
+- [Narrowing (`typeof` guards, `instanceof`)](https://www.typescriptlang.org/docs/handbook/2/narrowing.html)
 - [TSConfig reference](https://www.typescriptlang.org/tsconfig/)
 - [`paths` compiler option](https://www.typescriptlang.org/tsconfig/paths.html)
 
@@ -127,3 +132,4 @@ These MDN/Vitest/Vue pages directly explain patterns used in SnapUp:
 | [06 Dev/Test/Deploy](06-development-testing-and-deployment.md) | Commands, tests, PWA, Vercel |
 | [07 Known issues](07-known-issues-and-roadmap.md) | Prioritized fixes |
 | [09 TS/JS concepts](09-typescript-javascript-concepts.md) | Language patterns by file |
+| [10 Authentication](10-authentication.md) | DummyJSON login flow, session, guards, lessons |
