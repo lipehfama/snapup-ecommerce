@@ -27,21 +27,7 @@ snapup-ecommerce/
 │   │   ├── CartMessage/
 │   │   ├── CartModal/
 │   │   ├── Footer/
-│   │   ├── Header/
-│   │   ├── HeaderSlider/
-│   │   ├── Loader/
-│   │   ├── Navbar/
-│   │   ├── Product/
-│   │   ├── ProductList/
-│   │   └── Sidebar/
-│   │       ├── main.scss            # resets, globals, utilities
-│   │       └── variables.scss       # theme tokens (colors, fonts)
-│   ├── components/                  # reusable presentational components
-│   │   ├── BackToTopButton/
-│   │   ├── CartMessage/
-│   │   ├── CartModal/
-│   │   ├── Footer/
-│   │   ├── Header/
+│   │   ├── Header/                  # reactive auth links (guest vs user)
 │   │   ├── HeaderSlider/
 │   │   ├── Loader/
 │   │   ├── Navbar/
@@ -49,8 +35,9 @@ snapup-ecommerce/
 │   │   ├── ProductList/
 │   │   └── Sidebar/
 │   ├── router/
-│   │   └── index.ts                 # 9 routes, 8 lazy-loaded
+│   │   └── index.ts                 # 10 routes, 9 lazy-loaded; /profile guarded
 │   ├── stores/                      # Pinia stores (state + actions)
+│   │   ├── authStore.ts             # login / restoreSession / logout + sessionStorage
 │   │   ├── cartStore.ts
 │   │   ├── cartStore.spec.ts
 │   │   ├── categoryStore.ts
@@ -61,11 +48,12 @@ snapup-ecommerce/
 │   │   ├── sidebarStore.ts
 │   │   └── sidebarStore.spec.ts     # not yet implemented
 │   ├── types/                       # TypeScript interfaces
+│   │   ├── IAuth.ts                 # ILoginCredentials, IAuthUser, ILoginResponse
 │   │   ├── IProducts.ts
 │   │   ├── ICarts.ts
 │   │   └── IFilters.ts
 │   ├── utils/                       # small pure helpers
-│   │   ├── apiURL.ts
+│   │   ├── apiURL.ts                # DummyJSON base URL (products + auth)
 │   │   ├── helpers.ts               # formatPrice()
 │   │   ├── images.ts                # imported asset URLs
 │   │   └── status.ts                # STATUS enum (Object.freeze)
@@ -74,45 +62,13 @@ snapup-ecommerce/
 │   │   ├── CategoryProduct/
 │   │   ├── Download/
 │   │   ├── Home/
-│   │   ├── Login/
+│   │   ├── Login/                   # implemented login form (authStore.login)
 │   │   ├── ProductSingle/
-│   │   ├── Register/
+│   │   ├── Profile/                 # guarded page (meta.requiresAuth)
+│   │   ├── Register/                # still a static placeholder form
 │   │   ├── Search/
 │   │   └── Support/
-│   ├── App.vue                      # shell: Header + Sidebar + router-view + Footer + BackToTop
-│   └── main.ts                      # entry: CSS, Pinia, Router, SW, mount
-├── wiki/                            # this documentation
-│   │   └── index.ts                 # 9 routes, 8 lazy-loaded
-│   ├── stores/                      # Pinia stores (state + actions)
-│   │   ├── cartStore.ts
-│   │   ├── cartStore.spec.ts
-│   │   ├── categoryStore.ts
-│   │   ├── productStore.ts
-│   │   ├── productStore.spec.ts
-│   │   ├── searchStore.ts
-│   │   ├── searchStore.spec.ts      # not yet implemented
-│   │   ├── sidebarStore.ts
-│   │   └── sidebarStore.spec.ts     # not yet implemented
-│   ├── types/                       # TypeScript interfaces
-│   │   ├── IProducts.ts
-│   │   ├── ICarts.ts
-│   │   └── IFilters.ts
-│   ├── utils/                       # small pure helpers
-│   │   ├── apiURL.ts
-│   │   ├── helpers.ts               # formatPrice()
-│   │   ├── images.ts                # imported asset URLs
-│   │   └── status.ts                # STATUS enum (Object.freeze)
-│   ├── views/                       # route-level pages
-│   │   ├── Cart/
-│   │   ├── CategoryProduct/
-│   │   ├── Download/
-│   │   ├── Home/
-│   │   ├── Login/
-│   │   ├── ProductSingle/
-│   │   ├── Register/
-│   │   ├── Search/
-│   │   └── Support/
-│   ├── App.vue                      # shell: Header + Sidebar + router-view + Footer + BackToTop
+│   ├── App.vue                      # shell + authStore.restoreSession() on mount
 │   └── main.ts                      # entry: CSS, Pinia, Router, SW, mount
 ├── wiki/                            # this documentation
 ├── index.html
@@ -205,20 +161,28 @@ Some older components still use the Options API inside a regular `<script>` bloc
 valid, although [`<script setup>`](https://vuejs.org/api/sfc-script-setup.html) is the recommended
 Composition API syntax and would make the project more consistent.
 
-The root `App.vue` currently does not follow this order and has no local stylesheet. If the
-convention is intended to cover every SFC, it should be standardized separately.
+The root `App.vue` uses `<script setup lang="ts">` (imports, `useAuthStore`, `onMounted` calling
+`restoreSession()`) followed by its template, with no local stylesheet. New auth views
+(`Login.vue`, `Profile.vue`, `Header.vue`) follow the `<script setup>` convention; see
+[`<script setup>`](https://vuejs.org/api/sfc-script-setup.html).
 
 ## `src/stores/`
 
-Pinia stores own state shared across multiple pages or components. Network calls and cart
-persistence are performed here rather than directly in product cards.
+Pinia stores own state shared across multiple pages or components. Network calls and persistence
+(cart in `localStorage`, auth session in `sessionStorage`) are performed here rather than directly
+in components. `authStore.ts` owns user, tokens, `isAuthenticated`/`fullName` getters, and
+`login`/`restoreSession`/`logout` actions — see the
+[authentication guide](10-authentication.md).
 
 Each store file exports a single `useXStore` function created by `defineStore`. State, getters,
 and actions follow the Options-style API. Tests live as `XStore.spec.ts` in the same folder.
 
 ## `src/types/`
 
-Interfaces document API and application data. Future types should distinguish:
+Interfaces document API and application data. `IAuth.ts` already separates `ILoginCredentials`
+(username + password), `IAuthUser` (persisted profile, no password), and `ILoginResponse` (user +
+tokens) — see the [authentication guide](10-authentication.md). For products, future types should
+still distinguish:
 
 - raw API products;
 - display products with calculated discounts;
@@ -250,3 +214,4 @@ formatting or endpoint helpers, but larger API behavior would be clearer in a de
 - [Components, pages & routes](04-components-pages-and-routes.md) — UI inventory
 - [Styling & accessibility](05-styling-and-accessibility.md) — Sass structure & tokens
 - [TS/JS concepts](09-typescript-javascript-concepts.md) — patterns by file location
+- [Authentication](10-authentication.md) — auth store, types, guard

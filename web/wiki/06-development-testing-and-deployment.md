@@ -112,11 +112,19 @@ state, status, and request URL. Key points:
 ### Still untested (next suites to add)
 
 1. `categoryStore` / `searchStore` success + failure (same fetch-stub pattern as `productStore`).
-2. `sidebarStore` toggle actions.
-3. Discounted-price helper once it is extracted (currently duplicated in `ProductList` and
+2. `authStore` login success/failure, `restoreSession()` revalidation + logout on expired token,
+   `logout()` storage clearing, and `isAuthenticated`/`fullName` getters — stub `fetch` with
+   `vi.stubGlobal` and seed/read `sessionStorage` (same patterns as `productStore.spec.ts` and
+   `cartStore.spec.ts`). No `authStore.spec.ts` exists yet.
+3. `sidebarStore` toggle actions.
+4. Discounted-price helper once it is extracted (currently duplicated in `ProductList` and
    `ProductSingle`).
-4. Cart persistence with corrupt stored JSON (`JSON.parse` throwing).
-5. Route-parameter changes on product/search pages (currently fetch only in `onMounted`).
+5. Cart persistence with corrupt stored JSON (`JSON.parse` throwing). Note: `authStore`
+   already guards its own `JSON.parse` with `try/catch` — see the
+   [authentication guide](10-authentication.md#sessionstorage).
+6. Route-parameter changes on product/search pages (currently fetch only in `onMounted`).
+7. Router guard: unauthenticated `/profile` → `/login?redirect=/profile`, and post-login return
+   (mock the auth store's `isAuthenticated`).
 
 ## Production build
 

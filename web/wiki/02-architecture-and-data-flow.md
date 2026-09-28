@@ -16,13 +16,14 @@ flowchart TB
         BTT["BackToTopButton"]
     end
 
-    subgraph Router["Vue Router — 9 routes"]
+    subgraph Router["Vue Router — 10 routes"]
         HOME["/ → Home"]
         PROD["/product/:id → ProductSingle"]
         CAT["/category/:category → CategoryProduct"]
         CART["/cart → Cart"]
         SEARCH["/search/:searchTerm → Search"]
         MISC["/support · /download · /login · /register"]
+        PROF["/profile → Profile (requiresAuth)"]
     end
 
     subgraph Stores["Pinia stores"]
@@ -31,6 +32,7 @@ flowchart TB
         SS["searchStore"]
         CARTS["cartStore ↔ localStorage"]
         SBS["sidebarStore"]
+        AUTH["authStore ↔ sessionStorage"]
     end
 
     EXT[("DummyJSON API\nhttps://dummyjson.com")]
@@ -56,7 +58,7 @@ flowchart TB
     subgraph VIEWPORT["Browser viewport"]
         direction TB
         HEADER["Header (top links + Navbar:\nlogo, search, cart button)"]
-        BODY["router-view\n(Home / ProductSingle / CategoryProduct /\nCart / Search / Support / Download / Login / Register)"]
+        BODY["router-view\n(Home / ProductSingle / CategoryProduct /\nCart / Search / Support / Download / Login / Register / Profile)"]
         FOOTER["Footer (policy/about links)"]
     end
     SIDEBAR["Sidebar (off-canvas drawer)\nAll Categories → /category/:slug"] -.- BODY
@@ -91,20 +93,26 @@ flowchart TB
 4. The PWA registration helper is invoked when service workers are supported.
 5. Vue mounts to the `#app` element in `index.html`.
 
-[`src/App.vue`](../src/App.vue) owns the persistent shell:
-
-```text
-Header
-Sidebar
-router-view
-Footer
-```
+[`src/App.vue`](../src/App.vue) owns the persistent shell (Header, Sidebar, `router-view`,
+Footer) and calls `authStore.restoreSession()` in `onMounted` to revalidate a stored
+`sessionStorage` token via `GET /auth/me`. See the
+[authentication guide](10-authentication.md) and
+[Vue lifecycle](https://vuejs.org/guide/essentials/lifecycle.html).
 
 ## Routing
 
 [`src/router/index.ts`](../src/router/index.ts) uses `createWebHistory`. Home is imported eagerly;
-the other pages use dynamic imports and therefore become separate build chunks. This follows Vue
+the other nine pages use dynamic imports and therefore become separate build chunks. This follows Vue
 Router's [lazy-loading route pattern](https://router.vuejs.org/guide/advanced/lazy-loading).
+
+`/profile` carries `meta: { requiresAuth: true }`, and a global `router.beforeEach()` guard
+redirects unauthenticated visits to `/login?redirect=<original-path>`. `Login.vue` navigates back
+to that path with `router.push()` after a successful login. Full flow — including why
+`meta.requiresAuth` alone protects nothing and why client guards are UX rather than backend
+security — is documented in the [authentication guide](10-authentication.md). References:
+[Navigation guards](https://router.vuejs.org/guide/advanced/navigation-guards.html),
+[Route meta fields](https://router.vuejs.org/guide/advanced/meta.html),
+[Programmatic navigation](https://router.vuejs.org/guide/essentials/navigation.html).
 
 ## Pinia stores
 
@@ -118,6 +126,7 @@ Pinia separates shared state from rendering. Its concepts are documented in the
 | `searchStore` | Search results and request status | DummyJSON |
 | `cartStore` | Cart lines, totals, item count, confirmation visibility | `localStorage` |
 | `sidebarStore` | Sidebar open/closed state | None |
+| `authStore` | User, access/refresh tokens, loading + error flags | DummyJSON auth + `sessionStorage` |
 
 The API stores use four status strings from `src/utils/status.ts`:
 
@@ -173,12 +182,43 @@ sequenceDiagram
     Cart-->>CartPage: lines, count, total
 ```
 
-Only the cart is persistent. Product, category, search, and sidebar state are recreated after a
-reload.
+Only the cart and the auth session are persistent. Product, category, search, and sidebar state
+are recreated after a reload. The two persistent stores intentionally differ: the cart uses
+`localStorage` (convenience data worth keeping across sessions) while auth uses
+[`sessionStorage`](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage)
+(user + short-lived tokens, cleared when the tab session ends). See
+[Web Storage](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API) and the
+[authentication guide](10-authentication.md#difference-between-sessionstorage-and-localstorage).
+
+## Auth data flow
+
+```mermaid
+sequenceDiagram
+    participant Form as Login.vue
+    participant Store as authStore
+    participant API as DummyJSON auth
+    participant Storage as sessionStorage
+    participant Header
+
+    Form->>Store: login({ username, password })
+    Store->>API: POST /auth/login
+    API-->>Store: ILoginResponse
+    Store->>Store: { accessToken, refreshToken, ...user } split
+    Store->>Storage: persist user + tokens
+    Store-->>Header: reactive isAuthenticated update
+    Form->>Form: router.push(redirect ?? "/")
+```
+
+`App.vue` revalidates on startup via `GET /auth/me`; `/profile` is guarded by
+`meta.requiresAuth` + `beforeEach`. See the [authentication guide](10-authentication.md).
 
 ## Type and utility layers
 
 - `src/types/IProducts.ts` describes product fields.
+- `src/types/IAuth.ts` describes `ILoginCredentials` (username + password),
+  `IAuthUser` (persisted profile, no password), and `ILoginResponse` (user + tokens).
+  The password lives only in the credentials type and the login request body — never in
+  Pinia state or `sessionStorage`. See the [authentication guide](10-authentication.md).
 - `src/types/ICarts.ts` adds cart quantity and line total fields.
 - `src/types/IFilters.ts` describes category data, although its current inheritance should be
   corrected; see the [roadmap](07-known-issues-and-roadmap.md).
@@ -193,5 +233,6 @@ reload.
 
 - [Folder structure](03-folder-structure.md) — where files live
 - [Components, pages & routes](04-components-pages-and-routes.md) — UI inventory
+- [Authentication](10-authentication.md) — login flow, session, guards
 - [Pinia stores deep-dive](06-development-testing-and-deployment.md#pinia-stores) — store internals
 - [Known issues & roadmap](07-known-issues-and-roadmap.md) — architecture-level fixes

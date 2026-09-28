@@ -27,8 +27,10 @@ button active. Disable the control and make the handler refuse zero-stock produc
 
 ### Validate HTTP responses
 
-Every API store should check `response.ok` before parsing a successful payload. `fetch()` does not
-reject merely because the server returns 404 or 500. See
+Catalog stores (`productStore`, `categoryStore`, `searchStore`) should check `response.ok` before
+parsing a successful payload. `fetch()` does not reject merely because the server returns 404 or
+500. The new `authStore.login()` / `restoreSession()` already follow this pattern and can be used
+as the reference implementation. See
 [MDN: Using Fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) and
 [`Response.ok`](https://developer.mozilla.org/en-US/docs/Web/API/Response/ok).
 
@@ -77,8 +79,11 @@ update hook so navigation between reused product views always fetches the new pr
 ### Harden cart persistence
 
 Wrap `JSON.parse()` in validation and a fallback. Corrupt or outdated local data currently can stop
-the cart store from initializing. Remember that Web Storage is synchronous and origin-scoped; see
-[MDN Web Storage](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API).
+the cart store from initializing. The new `authStore.getStoredUser()` already does this
+(`try/catch` + `removeItem` + `null` fallback) and is the pattern to copy. Remember that Web Storage
+is synchronous and origin-scoped; see
+[MDN Web Storage](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API) and the
+[authentication guide](10-authentication.md#sessionstorage).
 
 ### Define cart-count semantics
 
@@ -89,10 +94,17 @@ show unique products or the sum of quantities, then name and test the value acco
 
 - Implement or remove “Buy now” and “Check Out.”
 - Turn the cart modal's “view cart” text into a real link.
-- Add real seller, download, support, registration, login, privacy, terms, and about routes.
+- Add real seller, download, support, registration, privacy, terms, and about routes. (Login and
+  the guarded `/profile` page are now implemented against DummyJSON auth — see the
+  [authentication guide](10-authentication.md). Register is still a static placeholder.)
 - Add a not-found route.
 - Make product thumbnails change the primary image.
 - Replace placeholder footer year/content as appropriate.
+- Decide the token-refresh story: `authStore` sets `expiresInMins: 30` but has no silent-refresh
+  flow yet; an expired token currently forces `logout()` on the next `restoreSession()`.
+- Note: browsers may show password-reuse warnings for the public DummyJSON demo credentials
+  (`emilys` / `emilyspass`) displayed on the login page. This is expected for shared demo data —
+  never reuse that pattern with real credentials.
 
 ## Priority 4: PWA and configuration
 
@@ -144,13 +156,13 @@ coverage, and Vue component testing.
 |---|---|---|---|
 | Cart total pricing basis | `cartStore.ts` | S | High (user-facing math) |
 | Out-of-stock add allowed | `ProductSingle.vue`, `cartStore.ts` | S | High |
-| Missing `response.ok` check | `productStore.ts`, `categoryStore.ts`, `searchStore.ts` | S | Medium |
+| Missing `response.ok` check | `productStore.ts`, `categoryStore.ts`, `searchStore.ts` (`authStore.ts` already checks) | S | Medium |
 | Type hierarchy broken | `IFilters.ts`, `types/` | M | Medium (TS errors) |
 | Duplicate category fetches | `Navbar.vue`, `Sidebar.vue`, `Home.vue` | S | Low |
 | No error UI | all views | S | Medium |
 | Product route reuse | `ProductSingle.vue` | S | High |
 | Search UX gaps | `Navbar.vue`, `Search.vue` | M | Medium |
-| Cart JSON.parse unguarded | `cartStore.ts` | S | High (crash on init) |
+| Cart JSON.parse unguarded | `cartStore.ts` (`authStore.ts` already guards) | S | High (crash on init) |
 | Cart badge semantics | `cartStore.ts`, `Navbar.vue` | S | Low |
 | Manifest icon 404 | `vite.config.ts` | XS | Low |
 | Runtime cache stale regex | `vite.config.ts` | S | Low |
