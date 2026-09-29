@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'app_colors.dart';
 
@@ -6,7 +7,8 @@ abstract final class AppTheme {
   static ThemeData get light {
     return ThemeData(
       useMaterial3: true,
-      fontFamily: 'Roboto',
+
+      fontFamily: GoogleFonts.poppins().fontFamily,
 
       scaffoldBackgroundColor: AppColors.background,
 
