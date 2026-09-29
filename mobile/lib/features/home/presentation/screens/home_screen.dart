@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:snapup_mobile/core/theme/app_colors.dart';
+import 'package:snapup_mobile/features/home/presentation/widgets/promotional_banner.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -11,9 +12,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'SnapUp.',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
@@ -22,10 +21,12 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
+
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // Search
             TextField(
               decoration: InputDecoration(
                 hintText: 'Search your items...',
@@ -41,6 +42,7 @@ class HomeScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
+            // Categories
             SizedBox(
               height: 40,
               child: ListView(
@@ -53,6 +55,34 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
+
+            const SizedBox(height: 24),
+
+            // Promotional banner
+            const PromotionalBanner(),
+
+            const SizedBox(height: 28),
+
+            // Products section
+            const Text(
+              'ALL OUR PRODUCTS',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
+            ),
+
+            const SizedBox(height: 8),
+
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Container(width: 40, height: 3, color: AppColors.primary),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Product grid will be added next.
           ],
         ),
       ),
@@ -63,18 +93,13 @@ class HomeScreen extends StatelessWidget {
 class _CategoryItem extends StatelessWidget {
   final String label;
 
-  const _CategoryItem({
-    required this.label,
-  });
+  const _CategoryItem({required this.label});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: Chip(
-        label: Text(label),
-        backgroundColor: AppColors.surface,
-      ),
+      child: Chip(label: Text(label), backgroundColor: AppColors.surface),
     );
   }
 }
