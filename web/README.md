@@ -8,14 +8,14 @@ the browser.
 
 ## Screenshot
 
-![SnapUp web application](https://github.com/user-attachments/assets/e1bb3c59-01b8-447f-bd73-b67a4763fa1d)
+![SnapUp web application](public/snapup-ecommece-screenshot.png)
 
 ## Run the web app
 
 From this directory:
 
 ```bash
-bun install --frozen-lockfile
+bun install
 bun run dev
 ```
 

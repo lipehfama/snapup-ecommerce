@@ -17,7 +17,7 @@ browser storage for the cart.
 
 ```bash
 cd web
-bun install --frozen-lockfile
+bun install
 bun run dev
 ```
 
@@ -41,4 +41,3 @@ Each application maintains its own detailed documentation:
 
 - [Web wiki](web/wiki/README.md)
 - [Mobile wiki](mobile/wiki/README.md)
-
