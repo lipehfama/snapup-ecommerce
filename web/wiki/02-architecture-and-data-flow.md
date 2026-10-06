@@ -152,7 +152,8 @@ sequenceDiagram
     Store->>Store: status = LOADING
     Store->>API: fetch products/categories/search
     API-->>Store: JSON response
-    Store->>Store: save data; status = SUCCEEDED
+    Store->>Store: save data
+    Store->>Store: set status to SUCCEEDED
     Store-->>View: reactive update
     View->>List: products prop
     List->>List: calculate discountedPrice
