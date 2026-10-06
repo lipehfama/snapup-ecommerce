@@ -1,44 +1,43 @@
 
-# Snapup Ecommerce
+# SnapUp Ecommerce
 
-## Project documentation
+This repository contains the SnapUp Ecommerce applications for web and mobile.
 
-The project architecture, folder structure, data flow, development workflow, deployment setup,
-known issues, and official technical references are documented in the [project wiki](wiki/README.md).
+| Application | Stack | Documentation |
+| --- | --- | --- |
+| Web | Vue 3, TypeScript, Pinia, Vite, and Bun | [Web README](web/README.md) |
+| Mobile | Flutter and Dart | [Mobile README](mobile/README.md) |
 
-### Screenshots
+## Choose an application
 
-![snapup](https://github.com/user-attachments/assets/e1bb3c59-01b8-447f-bd73-b67a4763fa1d)
+### Web
 
-## :rocket: Run Project
+The web app is a Vue progressive web application that uses DummyJSON for product data and
+browser storage for the cart.
 
 ```bash
+cd web
 bun install
 bun run dev
 ```
 
-## Recommended IDE Setup
+Read the [web setup, commands, technologies, and documentation](web/README.md).
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+### Mobile
 
-## :wrench: Technologies Used
+The mobile app is built with Flutter.
 
-![Vue](https://img.shields.io/badge/Vue%20js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D)
-![Pinia](https://img.shields.io/badge/pinia-%2335495e.svg?style=for-the-badge&logo=pinia&logoColor=%234FC08D)
-![Typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![Bootstrap](https://img.shields.io/badge/bootstrap-%238511FA.svg?style=for-the-badge&logo=bootstrap&logoColor=white)
-![Sass](https://img.shields.io/badge/Sass-CC6699?style=for-the-badge&logo=sass&logoColor=white)
-![Vite](https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
-![Bun](https://img.shields.io/badge/bun-282a36?style=for-the-badge&logo=bun&logoColor=fbf0df)
-![Vitest](https://img.shields.io/badge/-Vitest-252529?style=for-the-badge&logo=vitest&logoColor=FCC72B)
+```bash
+cd mobile
+flutter pub get
+flutter run
+```
 
-## :rocket: Project Information
+Read the [mobile setup and development instructions](mobile/README.md).
 
-- Snapup Ecommerce
-- Semantic HTML5 markup
-- Grid and Flex
-- Media queries and responsivity
-- Sass Mixins
-- Use ref
+## Documentation
 
+Each application maintains its own detailed documentation:
 
+- [Web wiki](web/wiki/README.md)
+- [Mobile wiki](mobile/wiki/README.md)
