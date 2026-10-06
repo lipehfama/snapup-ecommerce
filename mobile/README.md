@@ -1,17 +1,27 @@
-# snapup_mobile
+# SnapUp Ecommerce — Mobile
 
-A new Flutter project.
+The SnapUp mobile application is built with Flutter and Dart.
 
-## Getting Started
+[Repository overview](../README.md) · [Web app](../web/README.md) · [Mobile wiki](wiki/README.md)
 
-This project is a starting point for a Flutter application.
+## Run the mobile app
 
-A few resources to get you started if this is your first Flutter project:
+From this directory:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```bash
+flutter pub get
+flutter run
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Useful commands
+
+| Command | Purpose |
+| --- | --- |
+| `flutter run` | Run the app on a connected device or emulator. |
+| `flutter test` | Run the Flutter test suite. |
+| `flutter analyze` | Analyze the Dart source for issues. |
+
+## Learn Flutter
+
+- [Flutter getting started guide](https://docs.flutter.dev/get-started/learn-flutter)
+- [Flutter documentation](https://docs.flutter.dev/)
