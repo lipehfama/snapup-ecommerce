@@ -210,6 +210,7 @@ References:
 
 ```json
 {
+  "installCommand": "bun install --frozen-lockfile --force",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
@@ -220,10 +221,16 @@ This configuration matches Vercel's documented
 [Vite SPA deep-linking setup](https://vercel.com/docs/frameworks/frontend/vite) and
 [rewrite behavior](https://vercel.com/docs/routing/rewrites).
 
-Vercel project settings should bebe:
+The install command reinstalls dependencies from the committed lockfile instead of
+reusing a potentially inconsistent cached dependency layout. This matters because
+Vue requires CommonJS-compatible `estree-walker` 2 while other tools use the
+ESM-only version 3. Local development can continue to use `bun install`.
+
+Vercel project settings should be:
 
 ```text
 Build command: bun run build
+Root directory: web
 Output directory: dist
 Framework preset: Vite
 ```

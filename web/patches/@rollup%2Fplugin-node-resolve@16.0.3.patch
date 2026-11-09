@@ -1,0 +1,25 @@
+diff --git a/dist/cjs/index.js b/dist/cjs/index.js
+index 4047435046a30bede18b1b88a86310bf6180f24f..4effaa711f199c98a141b07056f3fa720d943f26 100644
+--- a/dist/cjs/index.js
++++ b/dist/cjs/index.js
+@@ -4,7 +4,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
+ 
+ var path = require('path');
+ var module$1 = require('module');
+-var deepMerge = require('deepmerge');
++var deepMerge = require('deepmerge').deepmerge;
+ var isModule = require('is-module');
+ var fs = require('fs');
+ var util = require('util');
+diff --git a/dist/es/index.js b/dist/es/index.js
+index 6c22eb316dfa46659051b84baca173ba8609081e..b16052fe073af2d43b3c8d41e4d740bbbf4e9e65 100644
+--- a/dist/es/index.js
++++ b/dist/es/index.js
+@@ -1,6 +1,6 @@
+ import path, { dirname, resolve, extname, normalize, sep } from 'path';
+ import { builtinModules } from 'module';
+-import deepMerge from 'deepmerge';
++import { deepmerge as deepMerge } from 'deepmerge';
+ import isModule from 'is-module';
+ import fs, { realpathSync } from 'fs';
+ import { promisify } from 'util';
